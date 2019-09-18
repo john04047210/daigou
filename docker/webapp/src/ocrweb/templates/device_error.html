@@ -1,0 +1,127 @@
+{%- extends 'base.html' %}
+
+{%- block page_body %}
+<div class="content-page">
+    <div class="content">
+        {% include 'page_header.html' %}
+
+        <!-- Start Content-->
+        <div class="container-fluid">
+            <!-- start page title -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="page-title-box">
+                        <div class="page-title-right">
+                            <a href="javascript: void(0);" class="btn btn-primary ml-2" id="btn-refresh">
+                                <i class="mdi mdi-autorenew"></i>
+                            </a>
+                            <a href="javascript: void(0);" class="btn btn-info ml-2" id="btn-back">
+                                <i class="mdi mdi-keyboard-backspace"></i>
+                            </a>
+                        </div>
+                        <h1 class="page-title display-4">{{_('page_device_error')}}</h1>
+                    </div>
+                </div>
+            </div>
+            <!-- end page title -->
+
+            <div class="row">
+                <div class="d-none" id="cur_device_id">{{device.dev_id}}</div>
+                <div class="col-12 col-sm-4 col-md-4 col-lg-4 col-xl-2">
+                    <div class="card d-block" id="device-card">
+                        <div class="text-center p-1">
+                            {% if device.dev_type == 1001 %}
+                            <img class="card-img-top img-thumbnail rounded-circle" src="{{url_for('static', filename='images/ElectricMeter.png')}}" style="max-width: 150px;" alt="Card image cap">
+                            {% endif %}
+                            {% if device.dev_type == 1002 %}
+                            <img class="card-img-top img-thumbnail rounded-circle" src="{{url_for('static', filename='images/WaterMeter.png')}}" style="max-width: 150px;" alt="Card image cap">
+                            {% endif %}
+                            {% if device.dev_type == 1003 %}
+                            <img class="card-img-top img-thumbnail rounded-circle" src="{{url_for('static', filename='images/GasMeter.png')}}" style="max-width: 150px;" alt="Card image cap">
+                            {% endif %}
+                            {% if device.dev_type == 1004 %}
+                            <img class="card-img-top img-thumbnail rounded-circle" src="{{url_for('static', filename='images/ElectricMeter.png')}}" style="max-width: 150px;" alt="Card image cap">
+                            {% endif %}
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">{{device.dev_name}}</h5>
+                            <p class="card-text">
+                                <small class="text-success">{{_('page_table_title_device_id')}}: </small>
+                                <small class="text-muted">{{device.dev_id}}</small>
+                            </p>
+                        </div>
+                    </div>
+                </div><!-- end col -->
+                <div class="col-12 col-sm-8 col-md-8 col-lg-8 col-xl-10">
+                    <div class="card">
+                        <div class="card-body pb-1">
+                            <div class="tab-content">
+                                <div class="row">
+                                    <div class="col-xl-12" id="device_error_list">
+                                        <div class="table-responsive-sm">
+                                            <table id="data-table" class="table table-sm table-centered table-hover mb-0">
+                                                <thead>
+                                                    <tr>
+                                                        <th>{{_('page_table_title_no')}}</th>
+                                                        <th>{{_('Se')}}</th>
+                                                        <th>エラー値</th>
+                                                        <th>エラー位置</th>
+                                                        <th>修正値</th>
+                                                        <th>修正位置</th>
+                                                        <th>{{_('Images')}}</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                {% for error in errors | reverse -%}
+                                                    <tr>
+                                                        <td>
+                                                            <span class="text-muted font-13">{{ loop.index }}</span>
+                                                        </td>
+                                                        <td>
+                                                            <span class="text-muted font-13">{{ error.se_id }}</span>
+                                                        </td>
+                                                        <td>
+                                                            <span class="text-muted font-13">{{ error.src_value }}</span>
+                                                        </td>
+                                                        <td>
+                                                            <span class="text-muted font-13">{{ error.src_err_code }}</span>
+                                                        </td>
+                                                        <td>
+                                                            <span class="text-muted font-13">{{ error.dst_value }}</span>
+                                                        </td>
+                                                        <td>
+                                                            <span class="text-muted font-13">{{ error.dst_err_code }}</span>
+                                                        </td>
+                                                        <td>
+                                                            {% for err_img in error.img_urls -%}
+                                                            <img height="24" class="img-rounded meter-img" src="{{url_for('static', filename=err_img.url)}}" alt="no image" title="{{err_img.idx}}">
+                                                            {%- endfor %}
+                                                        </td>
+                                                    </tr>
+                                                {%- endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div> <!-- end table-responsive-->
+                                    </div> <!-- end col -->
+                                </div>
+                            </div><!-- end tab-content -->
+                        </div><!-- end card-body -->
+                    </div><!-- end card -->
+                </div><!-- end col -->
+            </div><!-- end row -->
+
+        </div> <!-- container -->
+
+    </div> <!-- content -->
+
+    <!-- Footer Start -->
+    <footer class="footer">
+        {% include 'page_footer.html' %}
+    </footer>
+    <!-- end Footer -->
+</div>
+{%- endblock page_body %}
+
+{%- block page_script %}
+<script src="{{ url_for('static', filename='js/device_error.js') }}"></script>
+{%- endblock page_script %}

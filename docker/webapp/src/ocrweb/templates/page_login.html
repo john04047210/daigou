@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>Hyper - Responsive Bootstrap 4 Admin Dashboard</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta content="A fully featured admin theme which can be used to build CRM, CMS, etc." name="description" />
+        <meta content="Coderthemes" name="author" />
+        <!-- App favicon -->
+        <link rel="shortcut icon" href="{{url_for('static', filename='images/favicon.ico')}}">
+
+        <!-- App css -->
+        <link href="{{url_for('static', filename='css/icons.min.css')}}" rel="stylesheet" type="text/css" />
+        <link href="{{url_for('static', filename='css/app.min.css')}}" rel="stylesheet" type="text/css" />
+
+    </head>
+
+    <body class="authentication-bg">
+
+        <div class="account-pages mt-5 mb-5">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-lg-5">
+                        <div class="card">
+
+                            <!-- Logo -->
+                            <div class="card-header pt-3 pb-1 text-center">
+                                <a href="index.html">
+                                    <span><img src="{{url_for('static', filename='images/logo-light.gif')}}" alt="" height="60"></span>
+                                </a>
+                            </div>
+
+                            <div class="card-body p-4">
+
+                                <div class="text-center w-75 m-auto">
+                                    <h4 class="text-dark-50 text-center mt-0 font-weight-bold">Sign In</h4>
+                                    <p class="text-muted mb-4">Enter your email address and password to access admin panel.</p>
+                                </div>
+
+                                <div class="d-none" id="form-action">{{url_for('poc_index.login')}}</div>
+                                <div class="alert alert-danger {{'' if errMsg else 'd-none'}}" role="alert">
+                                    <strong>Error - </strong> {{errMsg}}
+                                </div>
+                                <form action="{{url_for('poc_index.login')}}" method="post">
+
+                                    <div class="form-group">
+                                        <label for="emailaddress">Email address</label>
+                                        <input class="form-control" type="email" name="email" id="emailaddress" required="" placeholder="Enter your email" autocomplete="username email">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <a href="pages-recoverpw.html" class="text-muted float-right"><small>Forgot your password?</small></a>
+                                        <label for="password">Password</label>
+                                        <input class="form-control" type="password" required="" name="password" id="password" placeholder="Enter your password" autocomplete="current-password">
+                                    </div>
+
+                                    <div class="form-group mb-3">
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" name="remember" id="checkbox-signin" checked>
+                                            <label class="custom-control-label" for="checkbox-signin">Remember me</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group mb-0 text-center">
+                                        <button class="btn btn-primary" type="submit" id="btn-submit-login"> Log In </button>
+                                    </div>
+
+                                </form>
+                            </div> <!-- end card-body -->
+                        </div>
+                        <!-- end card -->
+
+                    </div> <!-- end col -->
+                </div>
+                <!-- end row -->
+            </div>
+            <!-- end container -->
+        </div>
+        <!-- end page -->
+
+        <!-- Footer Start -->
+        <footer class="footer footer-alt">
+            <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-6">
+                    2018 - 2019 © Hyper - {{_('page_footer_company')}}
+                </div>
+                <div class="col-md-6">
+                    <div class="footer-links d-none d-md-block">
+                        <a href="javascript: void(0);">{{_('page_footer_about')}}</a>
+                        <a href="javascript: void(0);">{{_('page_footer_support')}}</a>
+                        <a href="javascript: void(0);">{{_('page_footer_contact')}}</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </footer>
+        <!-- end Footer -->
+
+        <!-- App js -->
+        <script src="{{url_for('static', filename='js/app.min.js')}}"></script>
+        <script src="{{url_for('static', filename='js/md5.min.js')}}"></script>
+        <script src="{{url_for('static', filename='js/gas.login.js')}}"></script>
+    </body>
+</html>

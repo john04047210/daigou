@@ -1,0 +1,35 @@
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-body">
+                <!--<h4 class="header-title mt-2">使用量歴史情報</h4>-->
+                <div class="table-responsive-sm">
+                    <table class="table table-sm table-centered table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>{{_('page_table_title_no')}}</th>
+                                <th>{{_('page_table_title_usage_all')}}({{page_lite}})</th>
+                                <th>{{_('page_table_title_time')}}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for his in histories -%}
+                            <tr>
+                                <td>
+                                    <span class="text-muted font-13">{{ loop.index }}</span>
+                                </td>
+                                <td>
+                                    <span class="text-muted font-13">{{ his.value }}</span>
+                                </td>
+                                <td>
+                                    <span class="text-muted font-13">{{ his.date }}</span>
+                                </td>
+                            </tr>
+                        {%- endfor %}
+                        </tbody>
+                    </table>
+                </div> <!-- end table-responsive-->
+            </div> <!-- end card-body-->
+        </div> <!-- end card-->
+    </div> <!-- end col -->
+</div> <!-- end row -->

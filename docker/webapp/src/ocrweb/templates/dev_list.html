@@ -1,0 +1,20 @@
+{% for dev in dev_list -%}
+<div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
+    <div class="card widget-flat">
+        <div class="card-body">
+            <h5 class="text-muted font-weight-normal mt-0" title="Number of Customers">{{ dev.name }} ({{dev.id}})</h5>
+            {% if dev.type == 'electric' -%}
+            <img src="{{ url_for('static', filename='images/ElectricMeter.png') }}" class="btn-dev-list img-thumbnail rounded {{ 'border-primary' if dev.id == dev_active }}" data-dev_id="{{ dev.id }}">
+            {%- endif -%}
+            {% if dev.type == 'water' -%}
+            <img src="{{ url_for('static', filename='images/WaterMeter.png') }}" class="btn-dev-list img-thumbnail rounded {{ 'border-primary' if dev.id == dev_active }}" data-dev_id="{{ dev.id }}">
+            {%- endif -%}
+            {% if dev.type == 'gas' -%}
+            <img src="{{ url_for('static', filename='images/GasMeter.png') }}" class="btn-dev-list img-thumbnail rounded {{ 'border-primary' if dev.id == dev_active }}" data-dev_id="{{ dev.id }}">
+            {%- endif -%}
+            <h3 class="text-center">{{ dev.value -}}
+            </h3>
+        </div> <!-- end card-body-->
+    </div> <!-- end card-->
+</div> <!-- end col-->
+{%- endfor %}

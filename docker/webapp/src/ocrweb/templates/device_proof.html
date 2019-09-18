@@ -1,0 +1,139 @@
+{%- extends 'base.html' %}
+
+{%- block page_body %}
+<div class="content-page">
+    <div class="content">
+        {% include 'page_header.html' %}
+
+        {% if 'ocr_info' in device.dev_config -%}
+        <!-- Variable -->
+        <div class="d-none" id="dev_ocr_param">{{ device.dev_config.ocr_info | tojson }}</div>
+        {%- endif %}
+
+        <!-- Start Content-->
+        <div class="container-fluid">
+            <!-- start page title -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="page-title-box">
+                        <div class="page-title-right">
+                            <a href="javascript: void(0);" class="btn btn-primary ml-2" id="btn-refresh">
+                                <i class="mdi mdi-autorenew"></i>
+                            </a>
+                            <a href="javascript: void(0);" class="btn btn-info ml-2" id="btn-back">
+                                <i class="mdi mdi-keyboard-backspace"></i>
+                            </a>
+                        </div>
+                        <h1 class="page-title display-4">{{_('page_device_proof')}}</h1>
+                    </div>
+                </div>
+            </div>
+            <!-- end page title -->
+
+            <div class="row">
+                <div class="d-none" id="cur_device_id">{{device.dev_id}}</div>
+                <div class="col-12 col-sm-4 col-md-4 col-lg-4 col-xl-2">
+                    <div class="card d-block" id="device-card">
+                        <div class="text-center p-1">
+                            {% if device.dev_type == 1001 %}
+                            <img class="card-img-top img-thumbnail rounded-circle" src="{{url_for('static', filename='images/ElectricMeter.png')}}" style="max-width: 150px;" alt="Card image cap">
+                            {% endif %}
+                            {% if device.dev_type == 1002 %}
+                            <img class="card-img-top img-thumbnail rounded-circle" src="{{url_for('static', filename='images/WaterMeter.png')}}" style="max-width: 150px;" alt="Card image cap">
+                            {% endif %}
+                            {% if device.dev_type == 1003 %}
+                            <img class="card-img-top img-thumbnail rounded-circle" src="{{url_for('static', filename='images/GasMeter.png')}}" style="max-width: 150px;" alt="Card image cap">
+                            {% endif %}
+                            {% if device.dev_type == 1004 %}
+                            <img class="card-img-top img-thumbnail rounded-circle" src="{{url_for('static', filename='images/ElectricMeter.png')}}" style="max-width: 150px;" alt="Card image cap">
+                            {% endif %}
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">{{device.dev_name}}</h5>
+                            <p class="card-text">
+                                <small class="text-success">{{_('page_table_title_device_id')}}: </small>
+                                <small class="text-muted">{{device.dev_id}}</small>
+                            </p>
+                        </div>
+                    </div>
+                </div><!-- end col -->
+                <div class="col-12 col-sm-8 col-md-8 col-lg-8 col-xl-10">
+                    <div class="card d-block">
+                        <div class="card-body">
+                            <h4 class="header-title">{{ device.dev_name }} ({{device.dev_id}})</h4>
+                            <div class="col-12 clearfix">
+                                <div class="float-left">
+                                    <div class="row">
+                                        <div id="container" class="float-left"></div>
+                                        <div class="d-none" id="proof_img_url">{{ url_for('static', filename=proof_image.img_url) if proof_image else '' }}</div>
+                                    </div>
+                                    {% if not proof_image %}
+                                    <p>イメージはアップロードしています...</p>
+                                    {% else %}
+                                    <div class="row mt-1">
+                                        <div id="controller">
+                                            <button type="button" class="btn btn-outline-info btn-sm btn-device-detect-rect">
+                                                <i class="mdi mdi-vector-rectangle"></i>{{_('btn_device_detect_rect')}}
+                                            </button>
+                                            <button type="button" class="btn btn-outline-info btn-sm btn-device-update-params">
+                                                <i class="mdi mdi-send"></i>{{_('btn_submit')}}
+                                            </button>
+                                            <button type="button" class="btn btn-outline-info btn-sm btn-cancel">
+                                                <i class="mdi mdi-cancel"></i>{{_('btn_cancel')}}
+                                            </button>
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                <div class="float-right">
+                                    <span><strong>ボタンの説明</strong></span><br>
+                                    <small>・<strong>領域検出</strong>: 自動領域検出</small><br>
+                                    <small>・<strong>確認</strong>: OCR本体に対して校正処理を実施</small><br>
+                                    <small>・<strong>キャンセル</strong>: 変更を取り消す</small><br>
+                                    <br>
+                                    <span><strong>領域の描画方法</strong></span><br>
+                                    <small>・<strong>新規</strong>: クリックまたはタップして、ドラッグで枠を描く</small><br>
+                                    <small>・<strong>削除</strong>: 枠に対して、ダブルクリックまたはダブルタップ</small><br>
+                                    <small>・<strong>位置移動</strong>: 枠を選択して、マウスまたはタップでドラッグ</small><br>
+                                    <small>・<strong>サイズ調整</strong>: 枠を選択して、ブロックの端か角をドラッグ</small><br>
+
+                                </div>
+                            </div>
+                            <div class="row mt-1">
+                                <div class="col-12 col-md-12 col-lg-12 col-xl-12">
+                                    <table id="labels-table" class="table table-bordered table-sm table-centered table-hover mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th>No.</th>
+                                                <th>LeftX</th>
+                                                <th>LeftY</th>
+                                                <th>RightX</th>
+                                                <th>RightY</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div> <!-- end card-body -->
+                    </div> <!-- end card -->
+                </div><!-- end col -->
+            </div><!-- end row -->
+
+        </div> <!-- container -->
+
+    </div> <!-- content -->
+
+    <!-- Footer Start -->
+    <footer class="footer">
+        {% include 'page_footer.html' %}
+    </footer>
+    <!-- end Footer -->
+</div>
+{%- endblock page_body %}
+
+{%- block page_script %}
+<script src="{{ url_for('static', filename='js/konva.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/device_proof.js') }}"></script>
+{%- endblock page_script %}

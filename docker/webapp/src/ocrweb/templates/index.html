@@ -1,0 +1,130 @@
+{%- extends 'base.html' %}
+
+{%- block page_body %}
+<div class="content-page">
+    <div class="content">
+        {% include 'page_header.html' %}
+
+        <!-- Start Content-->
+        <div class="container-fluid">
+            <!-- start page title -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="page-title-box">
+                        <div class="page-title-right">
+                            <a href="javascript: void(0);" class="btn btn-primary ml-2" id="btn-refresh">
+                                <i class="mdi mdi-autorenew"></i>
+                            </a>
+                        </div>
+                        <h1 class="page-title display-4">{{ page_title }}{{_('page_meter')}}</h1>
+                    </div>
+                </div>
+            </div>
+            <!-- end page title -->
+
+            <!-- start device list -->
+            <div class="d-none" id="cur_dev_id">{{dev_active}}</div>
+            <div class="d-none" id="page_title">{{page_title}}</div>
+            <div class="d-none" id="page_lite">{{page_lite}}</div>
+            <div class="d-none" id="page_lite2">{{page_lite2}}</div>
+            <div class="row" id="dev_list">
+                {% include 'dev_list.html' %}
+            </div>
+            <!-- end device list -->
+
+            <div class="row">
+                <div class="col-xl-7">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-body" style="position: relative;">
+                                    <h4 class="header-title mb-4">{{ page_title }}{{_('page_chart_title_usage_day')}}</h4>
+                                    <div id="line-chart-zoomable" class="apex-charts" style="min-height: 364px;"></div>
+                                </div>
+                                <div class="resize-triggers"><div class="expand-trigger">
+                                    <div style="width: 778px; height: 422px;"></div></div><div class="contract-trigger"></div>
+                                </div>
+                                <!-- end card body-->
+                            </div>
+                            <!-- end card -->
+                        </div>
+                    </div>
+
+                </div>
+                <!-- end col-->
+
+                <div class="col-xl-5" id="meter_history">
+                    {% include 'meter_history.html' %}
+                </div> <!-- end col -->
+            </div> <!-- end row -->
+
+            <div class="row">
+                <div class="col-xl-7">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-body" style="position: relative;">
+                                    <h4 class="header-title mb-4">{{ page_title }}{{_('page_chart_title_usage_total')}}</h4>
+                                    <div id="line-chart-annotations" class="apex-charts" style="min-height: 394px;"></div>
+                                </div>
+                                <div class="resize-triggers">
+                                    <div class="expand-trigger">
+                                        <div style="width: 778px; height: 480px;"></div>
+                                    </div>
+                                    <div class="contract-trigger"></div>
+                                </div> <!-- end card body-->
+                            </div> <!-- end card -->
+                        </div> <!-- end col -->
+                    </div> <!-- end row -->
+                </div>  <!-- end col-->
+
+                <div class="col-xl-5">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-body" style="position: relative;">
+                                    <h4 class="header-title">{{ page_title }}{{_('page_chart_title_usage_realtime')}}</h4>
+                                    <div id="line-chart-realtime" class="apex-charts" style="min-height: 364px;"></div>
+                                </div>
+                                <div class="resize-triggers">
+                                    <div class="expand-trigger">
+                                        <div style="width: 800px; height: 422px;"></div>
+                                    </div>
+                                    <div class="contract-trigger"></div>
+                                </div> <!-- end card body-->
+                            </div>  <!-- end card -->
+                        </div> <!-- end col-->
+                    </div> <!-- end row -->
+                </div> <!-- end col-->
+            </div> <!-- end row -->
+
+        </div> <!-- container -->
+
+    </div> <!-- content -->
+
+    <!-- Footer Start -->
+    <footer class="footer">
+        {% include 'page_footer.html' %}
+    </footer>
+    <!-- end Footer -->
+</div>
+{%- endblock page_body %}
+
+{%- block page_script %}
+<!-- third party js -->
+<script src="{{ url_for('static', filename='js/Chart.bundle.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/apexcharts.min.js') }}"></script>
+<!-- third party js ends -->
+
+<!-- demo app -->
+<script src="{{ url_for('static', filename='js/demo.dashboard.js') }}"></script>
+<!-- end demo js-->
+
+<!-- start chart demo -->
+<script src="{{ url_for('static', filename='js/stock-prices.js') }}"></script>
+<script src="{{ url_for('static', filename='js/irregular-data-series.js') }}"></script>
+<script src="{{ url_for('static', filename='js/demo.apex-line.js') }}"></script>
+<!-- end chart demo -->
+
+<script src="{{ url_for('static', filename='js/gas.meter.js') }}"></script>
+{%- endblock page_script %}

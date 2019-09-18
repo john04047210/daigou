@@ -1,0 +1,701 @@
+{%- extends 'base.html' %}
+
+{%- block page_body %}
+<div class="content-page">
+    <div class="content">
+        {% include 'page_header.html' %}
+
+        <!-- Start Content-->
+        <div class="container-fluid">
+            <!-- start page title -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="page-title-box">
+                        <div class="page-title-right">
+                            <div class="form-inline d-inline">
+                                <label class="d-none" for="range-date">Date</label>
+                                <input type="text" class="form-control date" id="range-date" data-toggle="date-picker" data-time-picker="true" data-locale="{'format': 'YYYY/MM/DD hh:mm A'}">
+                            </div>
+                            <div class="btn-group ml-2" role="group">
+                                <button id="btnGroupDrop1" type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="mdi mdi-download"></i>
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                                    <a href="javascript: void(0);" class="dropdown-item btn-download" data-file_format="txt">
+                                        <i class="mdi mdi-file-outline"></i>Text File
+                                    </a>
+                                    <a href="javascript: void(0);" class="dropdown-item btn-download" data-file_format="csv">
+                                        <i class="mdi mdi-file-document-box-outline"></i>CSV File
+                                    </a>
+                                    <a href="javascript: void(0);" class="dropdown-item btn-download" data-file_format="xlsx">
+                                        <i class="mdi mdi-file-table-outline"></i>Excel File
+                                    </a>
+                                </div>
+                            </div>
+                            <a href="javascript: void(0);" class="btn btn-primary ml-2" id="btn-refresh">
+                                <i class="mdi mdi-autorenew"></i>
+                            </a>
+                        </div>
+                        <h1 class="page-title display-4">{{_('page_device_list')}}</h1>
+                    </div>
+                </div>
+            </div>
+            <!-- end page title -->
+
+            <div class="row">
+                <div class="col-xl-12" id="device_list">
+                    <div class="table-responsive-sm">
+                        <table class="table table-sm table-centered table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>{{_('page_table_title_no')}}</th>
+                                    <th>{{_('page_table_title_device_state')}}</th>
+                                    <th>{{_('page_table_title_device_id')}}</th>
+                                    <th>{{_('page_table_title_device_name')}}</th>
+                                    {% if current_user.is_admin -%}
+                                    <th>{{_('user')}}</th>
+                                    {%- endif%}
+                                    <th>{{_('page_table_title_device_type')}}</th>
+                                    <th>{{_('page_table_title_device_rate')}}</th>
+                                    <th>{{_('page_table_title_device_meter_power')}}</th>
+                                    <th>{{_('page_table_title_device_operator')}}</th>
+                                    <th>{{_('page_table_title_device_address')}}</th>
+                                    <th>{{_('page_table_title_device_comment')}}</th>
+                                    <th>{{_('page_table_title_update_time')}}</th>
+                                    <th>
+                                        {% if current_user.is_admin -%}
+                                        <button type="button" class="btn btn-primary btn-device-new d-none d-xl-block">{{_('btn_device_create')}}</button>
+                                        <a href="javascript:void(0);" class="action-icon btn-device-new d-block d-xl-none text-lg-left"> <i class="mdi mdi-plus-circle-outline"></i></a>
+                                        {%- endif%}
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for device in devices -%}
+                                <tr>
+                                    <td>
+                                        <span class="text-muted font-13">{{ loop.index }}</span>
+                                    </td>
+                                    <td>
+                                        <span class="text-muted font-13" id="dev_id_{{device.dev_state}}">{{ device.dev_state_desc }}</span>
+                                    </td>
+                                    <td>
+                                        <span class="text-muted font-13" id="dev_id_{{device.dev_id}}">{{ device.dev_id }}</span>
+                                    </td>
+                                    <td>
+                                        <span class="text-muted font-13" id="dev_name_{{device.dev_id}}">{{ device.dev_name }}</span>
+                                    </td>
+                                    {% if current_user.is_admin -%}
+                                    <td>
+                                        <span class="text-muted font-13" id="user_name_{{device.dev_id}}">{{ device.user_name }}</span>
+                                    </td>
+                                    {%- endif%}
+                                    <td>
+                                        <span class="text-muted font-13">{{ device.dev_type_desc }}</span>
+                                        <div class="d-none" id="dev_type_{{device.dev_id}}">{{ device.dev_type }}</div>
+                                    </td>
+                                    <td>
+                                        <span class="text-muted font-13" id="dev_rate_{{device.dev_id}}">{{ device.dev_rate }}</span>
+                                        <div class="d-none" id="dev_meter_value_{{device.dev_id}}">{{ device.dev_meter_value }}</div>
+                                        <div class="d-none" id="dev_config_ocr_inter_{{device.dev_id}}">{{ device.dev_config_ocr_inter }}</div>
+                                        <div class="d-none" id="dev_config_uplink_inter_{{device.dev_id}}">{{ device.dev_config_uplink_inter }}</div>
+
+                                        {% if 'ocr_info' in device.dev_config -%}
+                                        <div class="d-none" id="dev_ocr_param_startx_{{device.dev_id}}">{{ device.dev_config.ocr_info.start_x }}</div>
+                                        <div class="d-none" id="dev_ocr_param_starty_{{device.dev_id}}">{{ device.dev_config.ocr_info.start_y }}</div>
+                                        <div class="d-none" id="dev_ocr_param_endx_{{device.dev_id}}">{{ device.dev_config.ocr_info.end_x }}</div>
+                                        <div class="d-none" id="dev_ocr_param_endy_{{device.dev_id}}">{{ device.dev_config.ocr_info.end_y }}</div>
+                                        <div class="d-none" id="dev_ocr_param_k1_{{device.dev_id}}">{{ device.dev_config.ocr_info.k1 }}</div>
+                                        <div class="d-none" id="dev_ocr_param_k2_{{device.dev_id}}">{{ device.dev_config.ocr_info.k2 }}</div>
+                                        <div class="d-none" id="dev_ocr_param_win1_{{device.dev_id}}">{{ device.dev_config.ocr_info.win1 }}</div>
+                                        <div class="d-none" id="dev_ocr_param_win2_{{device.dev_id}}">{{ device.dev_config.ocr_info.win2 }}</div>
+                                        <div class="d-none" id="dev_ocr_param_thresh_{{device.dev_id}}">{{ device.dev_config.ocr_info.ai_threshhold }}</div>
+                                        <div class="d-none" id="dev_ocr_param_cutflag_{{device.dev_id}}">{{ device.dev_config.ocr_info.frame_cut_flag }}</div>
+                                        {%- endif %}
+                                    </td>
+                                    <td>
+                                        <span class="text-muted font-13">{{ device.dev_power }}</span>
+                                    </td>
+                                    <td>
+                                        <span class="text-muted font-13" id="dev_operator_{{device.dev_id}}">{{ device.dev_operator }}</span>
+                                        <div class="d-none" id="dev_operator_code_{{device.dev_id}}">{{ device.dev_operator_code }}</div>
+                                    </td>
+                                    <td>
+                                        <span class="text-muted font-13">
+                                            <i class="mdi mdi-map-marker text-success"></i>{{ device.dev_address01 }}{{ device.dev_address02 }}{{ device.dev_address03 }}{{device.dev_address04}}-{{device.dev_address05}}-{{device.dev_address06}} {{device.dev_address07}}{{device.dev_address08}}</span>
+                                        <div class="d-none" id="dev_postcode_{{device.dev_id}}">{{ device.dev_postcode }}</div>
+                                        <div class="d-none" id="dev_address01_{{device.dev_id}}">{{ device.dev_address01 }}</div>
+                                        <div class="d-none" id="dev_address02_{{device.dev_id}}">{{ device.dev_address02 }}</div>
+                                        <div class="d-none" id="dev_address03_{{device.dev_id}}">{{ device.dev_address03 }}</div>
+                                        <div class="d-none" id="dev_address04_{{device.dev_id}}">{{ device.dev_address04 }}</div>
+                                        <div class="d-none" id="dev_address05_{{device.dev_id}}">{{ device.dev_address05 }}</div>
+                                        <div class="d-none" id="dev_address06_{{device.dev_id}}">{{ device.dev_address06 }}</div>
+                                        <div class="d-none" id="dev_address07_{{device.dev_id}}">{{ device.dev_address07 }}</div>
+                                        <div class="d-none" id="dev_address08_{{device.dev_id}}">{{ device.dev_address08 }}</div>
+                                    </td>
+                                    <td>
+                                        <span class="text-muted font-13" id="dev_comment_{{device.dev_id}}">{{ device.dev_comment }}</span>
+                                    </td>
+                                    <td>
+                                        <span class="text-muted font-13">{{ device.dev_updated }}</span>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group d-none d-xl-block">
+                                            <button type="button" class="btn btn-outline-success btn-sm btn-device-detail" data-devid="{{device.dev_id}}">
+                                                <i class="mdi mdi-eye"></i>{{_('btn_device_detail')}}</button>
+                                            <button type="button" class="btn btn-outline-success btn-sm btn-device-proof" data-devid="{{device.dev_id}}">
+                                                <i class="mdi mdi-eye-check"></i>{{_('btn_device_proof')}}</button>
+                                            <button type="button" class="btn btn-outline-info btn-sm btn-device-edit" data-devid="{{device.dev_id}}">
+                                                <i class="mdi mdi-square-edit-outline"></i>{{_('btn_device_edit')}}</button>
+                                            {% if current_user.is_admin -%}
+                                            {% if 'ocr_info' in device.dev_config -%}
+                                            <!-- <button type="button" class="btn btn-outline-info btn-sm btn-device-edit-ocr" data-devid="{{device.dev_id}}">
+                                                <i class="mdi mdi-credit-card-scan"></i>OCR {{_('btn_device_edit')}}</button> -->
+                                            {%- endif %}
+                                            <button type="button" class="btn btn-outline-info btn-sm btn-device-edit-host" data-devid="{{device.dev_id}}">
+                                                <i class="mdi mdi-router-wireless-settings"></i>Config {{_('btn_device_edit')}}</button>
+                                            <button type="button" class="btn btn-outline-info btn-sm btn-device-edit-ctrl" data-devid="{{device.dev_id}}">
+                                                <i class="mdi mdi-progress-upload"></i>Ctrl {{_('btn_device_edit')}}</button>
+                                            <button type="button" class="btn btn-outline-danger btn-sm btn-device-remove" data-devid="{{device.dev_id}}">
+                                                <i class="mdi mdi-delete"></i>{{_('btn_device_remove')}}</button>
+                                            {%- endif %}
+                                        </div>
+                                        <div class="table-action d-block d-xl-none">
+                                            <a href="javascript:void(0);" class="action-icon btn-device-detail" data-devid="{{device.dev_id}}"> <i class="mdi mdi-eye"></i></a>
+                                            <a href="javascript:void(0);" class="action-icon btn-device-proof" data-devid="{{device.dev_id}}"> <i class="mdi mdi-eye-check"></i></a>
+                                            <a href="javascript:void(0);" class="action-icon btn-device-edit" data-devid="{{device.dev_id}}"> <i class="mdi mdi-square-edit-outline"></i></a>
+                                            {% if current_user.is_admin -%}
+                                            {% if 'ocr_info' in device.dev_config -%}
+                                            <!-- <a href="javascript:void(0);" class="action-icon btn-device-edit-ocr" data-devid="{{device.dev_id}}"> <i class="mdi mdi-credit-card-scan"></i></a> -->
+                                            {%- endif %}
+                                            <a href="javascript:void(0);" class="action-icon btn-device-edit-host" data-devid="{{device.dev_id}}"> <i class="mdi mdi-router-wireless-settings"></i></a>
+                                            <a href="javascript:void(0);" class="action-icon btn-device-edit-ctrl" data-devid="{{device.dev_id}}"> <i class="mdi mdi-progress-upload"></i></a>
+                                            <a href="javascript:void(0);" class="action-icon btn-device-remove" data-devid="{{device.dev_id}}"> <i class="mdi mdi-delete"></i></a>
+                                            {%- endif %}
+                                        </div>
+                                    </td>
+                                </tr>
+                            {%- endfor %}
+                            </tbody>
+                        </table>
+                    </div> <!-- end table-responsive-->
+                </div> <!-- end col -->
+            </div> <!-- end row -->
+
+        </div> <!-- container -->
+
+    </div> <!-- content -->
+
+    <!-- Footer Start -->
+    <footer class="footer">
+        {% include 'page_footer.html' %}
+    </footer>
+    <!-- end Footer -->
+</div>
+{%- endblock page_body %}
+
+{%- block page_modal %}
+<div id="info-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="false">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div><!-- /.modal-header -->
+            <div class="modal-body">
+                <form class="form needs-validation was-validated" novalidate>
+                    <div class="form-row">
+                        <div class="form-group col-auto col-sm-4 col-md-4 col-lg-2 col-xl-2">
+                            <label for="input-devid" class="col-form-label">
+                                {{_('dev_id')}}<small class="text-danger">※</small></label>
+                            <input type="text" class="form-control" id="input-devid" data-post_key="" rrequired>
+                        </div>
+                        <div class="form-group col-auto">
+                            <label for="input-devname" class="col-form-label">
+                                {{_('dev_name')}}<small class="text-danger">※</small></label>
+                            <input type="text" class="form-control" id="input-devname" data-post_key="dev_name" rrequired>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-auto">
+                            <label for="input-devtype" class="col-form-label">
+                                {{_('dev_type')}}<small class="text-danger">※</small></label>
+                            <select class="form-control" id="input-devtype" data-post_key="dev_type" required>
+                                <option value="1001">{{_('dev_type_electric')}}</option>
+                                <option value="1002">{{_('dev_type_water')}}</option>
+                                <option value="1003">{{_('dev_type_gas')}}</option>
+                                <option value="1004">{{_('dev_type_electric_digit')}}</option>
+                            </select>
+                        </div>
+                        <div class="form-group col-auto">
+                            <label for="input-devrate" class="col-form-label">{{_('dev_rate')}}</label>
+                            <input type="text" class="form-control" id="input-devrate" placeholder="1.0" data-post_key="dev_rate" required>
+                        </div>
+                        <div class="form-group col-auto">
+                            <label for="input-devmetervalue" class="col-form-label">{{_('dev_meter_value')}}</label>
+                            <input type="text" class="form-control" id="input-devmetervalue" placeholder="0" data-post_key="dev_meter_value">
+                        </div>
+                        <div class="form-group col-auto">
+                            <label for="input-config-ocr-inter" class="col-form-label">
+                                {{_('dev_config')}}<small class="text-danger">※</small></label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">{{_('dev_config_ocr_inter')}}</div>
+                                </div>
+                                <input type="text" class="form-control col-auto col-sm-4 col-md-4 col-lg-2 col-xl-2" id="input-config-ocr-inter" placeholder="Minute(s)" data-post_key="dev_config_ocr_inter" rrequired>
+                                <div class="input-group-append">
+                                    <div class="input-group-text">{{_('dev_config_uplink_inter')}}</div>
+                                </div>
+                                <input type="text" class="form-control col-auto col-sm-6 col-md-6 col-lg-4 col-xl-4" id="input-config-uplink-inter" placeholder="Hour(s)" data-post_key="dev_config_uplink_inter" rrequired>
+                            </div>
+                            <span class="help-block"><small>Unit: OCR(M) Uplink(H)</small></span>
+                        </div>
+                        <div class="form-group col-auto">
+                            <label for="input-operator" class="col-form-label">
+                                {{_('dev_operator')}}<small class="text-danger">※</small></label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">{{_('dev_operator_code')}}</div>
+                                </div>
+                                <input type="text" class="form-control col-auto col-sm-4 col-md-4 col-lg-2 col-xl-2" id="input-operator" placeholder="" data-post_key="dev_operator_code" rrequired>
+                                <div class="input-group-append">
+                                    <div class="input-group-text">{{_('dev_operator_name')}}</div>
+                                </div>
+                                <input type="text" class="form-control col-auto col-sm-6 col-md-6 col-lg-4 col-xl-4" id="input-operator-name" placeholder="" data-post_key="dev_operator" rrequired>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="input-devpostcode" class="col-form-label">
+                            {{_('dev_postcode')}}<small class="text-danger">※</small></label>
+                        <div class="input-group">
+                            <input type="text" class="form-control col-4 col-sm-4 col-md-4 col-lg-3 col-xl-2" id="input-devpostcode" placeholder="000" data-post_key="dev_postcode" rrequired>
+                            <div class="input-group-append">
+                                <div class="input-group-text"> - </div>
+                            </div>
+                            <input type="text" class="form-control col-6 col-sm-6 col-md-6 col-lg-4 col-xl-3" id="input-devpostcode-next" placeholder="0000" data-post_key="dev_postcode" data-append="-" rrequired>
+                        </div>
+                    </div>
+                    <div class="form-group mb-0">
+                        <label for="input-devaddress01" class="col-form-label">
+                            {{_('dev_address')}}<small class="text-danger">※</small></label>
+                        <div class="input-group">
+                            <div class="form-group col-md-3 pl-0">
+                                <label for="input-devaddress01" class="col-form-label sr-only"></label>
+                                <input type="text" class="form-control" id="input-devaddress01" placeholder="{{_('dev_address01')}}" data-post_key="dev_address01" rrequired>
+                            </div>
+                            <div class="form-group col-md-4 pl-0">
+                                <label for="input-devaddress02" class="col-form-label sr-only"></label>
+                                <input type="text" class="form-control" id="input-devaddress02" placeholder="{{_('dev_address02')}}" data-post_key="dev_address02" rrequired>
+                            </div>
+                            <div class="form-group col-md-4 pl-0">
+                                <label for="input-devaddress03" class="col-form-label sr-only"></label>
+                                <input type="text" class="form-control" id="input-devaddress03" placeholder="{{_('dev_address03')}}" data-post_key="dev_address03" rrequired>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="input-devaddress04" class="col-form-label sr-only"></label>
+                        <div class="input-group">
+                            <input type="number" min="1" class="form-control col-4 col-sm-4 col-md-2 col-lg-2 col-xl-2" id="input-devaddress04" placeholder="0" data-post_key="dev_address04" rrequired>
+                            <div class="input-group-append">
+                                <div class="input-group-text pl-0">{{_('dev_address04')}}</div>
+                            </div>
+                            <input type="number" min="1" class="form-control col-4 col-sm-4 col-md-2 col-lg-2 col-xl-2" id="input-devaddress05" placeholder="0" data-post_key="dev_address05" rrequired>
+                            <div class="input-group-append">
+                                <div class="input-group-text pl-0">{{_('dev_address05')}}</div>
+                            </div>
+                            <input type="number" min="1" class="form-control col-4 col-sm-4 col-md-2 col-lg-2 col-xl-2" id="input-devaddress06" placeholder="0" data-post_key="dev_address06" rrequired>
+                            <div class="input-group-append">
+                                <div class="input-group-text pl-0">{{_('dev_address06')}}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="input-devaddress04" class="col-form-label sr-only"></label>
+                        <div class="input-group">
+                            <input type="text" class="form-control col-8 col-sm-8 col-md-4 col-lg-4 col-xl-4" id="input-devaddress07" placeholder="{{_('dev_address07')}}" data-post_key="dev_address07">
+                            <input type="text" class="form-control col-4 col-sm-4 col-md-2 col-lg-2 col-xl-2" id="input-devaddress08" placeholder="{{_('dev_address08')}}" data-post_key="dev_address08">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="input-devcomment" class="col-form-label">{{_('dev_comment')}}</label>
+                        <textarea class="form-control" id="input-devcomment" rows="3" data-post_key="dev_comment"></textarea>
+                    </div>
+                </form>
+            </div><!-- /.modal-body -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">{{_('btn_cancel')}}</button>
+                <button type="button" class="btn btn-primary" id="btn-modal-device-submit">{{_('btn_submit')}}</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<div id="ocr-param-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="false">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div><!-- /.modal-header -->
+            <div class="modal-body">
+                <form class="form needs-validation was-validated" novalidate>
+                    <div class="form-row">
+                        <div class="form-group col-auto">
+                            <label for="input-ocr-param-startx" class="col-form-label">
+                                {{_('dev_ocr_param')}}<small class="text-danger">※</small></label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">{{_('dev_ocr_param_startx')}}</div>
+                                </div>
+                                <input type="text" class="form-control col-auto col-sm-4 col-md-4 col-lg-2 col-xl-2" id="input-ocr-param-startx" placeholder="" data-post_key="dev_ocr_param_startx" required>
+                                <div class="input-group-append">
+                                    <div class="input-group-text">{{_('dev_ocr_param_starty')}}</div>
+                                </div>
+                                <input type="text" class="form-control col-auto col-sm-6 col-md-6 col-lg-4 col-xl-4" id="input-ocr-param-starty" placeholder="" data-post_key="dev_ocr_param_starty" required>
+                            </div>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">{{_('dev_ocr_param_endx')}}</div>
+                                </div>
+                                <input type="text" class="form-control col-auto col-sm-4 col-md-4 col-lg-2 col-xl-2" id="input-ocr-param-endx" placeholder="" data-post_key="dev_ocr_param_endx" required>
+                                <div class="input-group-append">
+                                    <div class="input-group-text">{{_('dev_ocr_param_endy')}}</div>
+                                </div>
+                                <input type="text" class="form-control col-auto col-sm-6 col-md-6 col-lg-4 col-xl-4" id="input-ocr-param-endy" placeholder="" data-post_key="dev_ocr_param_endy" required>
+                            </div>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">{{_('dev_ocr_param_k1')}}</div>
+                                </div>
+                                <input type="text" class="form-control col-auto col-sm-4 col-md-4 col-lg-2 col-xl-2" id="input-ocr-param-k1" placeholder="" data-post_key="dev_ocr_param_k1" required>
+                                <div class="input-group-append">
+                                    <div class="input-group-text">{{_('dev_ocr_param_k2')}}</div>
+                                </div>
+                                <input type="text" class="form-control col-auto col-sm-6 col-md-6 col-lg-4 col-xl-4" id="input-ocr-param-k2" placeholder="" data-post_key="dev_ocr_param_k2" required>
+                            </div>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">{{_('dev_ocr_param_win1')}}</div>
+                                </div>
+                                <input type="text" class="form-control col-auto col-sm-4 col-md-4 col-lg-2 col-xl-2" id="input-ocr-param-win1" placeholder="" data-post_key="dev_ocr_param_win1" required>
+                                <div class="input-group-append">
+                                    <div class="input-group-text">{{_('dev_ocr_param_win2')}}</div>
+                                </div>
+                                <input type="text" class="form-control col-auto col-sm-6 col-md-6 col-lg-4 col-xl-4" id="input-ocr-param-win2" placeholder="" data-post_key="dev_ocr_param_win2" required>
+                            </div>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">{{_('dev_ocr_param_thresh')}}</div>
+                                </div>
+                                <input type="text" class="form-control col-auto col-sm-4 col-md-4 col-lg-2 col-xl-2" id="input-ocr-param-thresh" placeholder="" data-post_key="dev_ocr_param_thresh" required>
+                                <div class="input-group-append">
+                                    <div class="input-group-text">{{_('dev_ocr_param_cutflag')}}</div>
+                                </div>
+                                <input type="text" class="form-control col-auto col-sm-6 col-md-6 col-lg-4 col-xl-4" id="input-ocr-param-cutflag" placeholder="" data-post_key="dev_ocr_param_cutflag" required>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div><!-- /.modal-body -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">{{_('btn_cancel')}}</button>
+                <button type="button" class="btn btn-primary" id="btn-modal-device-ocr-submit">{{_('btn_submit')}}</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- ocr-param-modal -->
+<div id="host-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="false">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div><!-- /.modal-header -->
+            <div class="modal-body">
+                <!-- server address -->
+                <form class="form needs-validation was-validated" novalidate>
+                    <div class="form-row">
+                        <div class="form-group col-auto">
+                            <label for="input-host-ip" class="col-form-label">
+                                {{_('dev_server_host')}}<small class="text-danger">※</small></label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">{{_('dev_server_ip')}}</div>
+                                </div>
+                                <input type="text" class="form-control form-control-host col-auto col-sm-6 col-md-6 col-lg-4 col-xl-4" id="input-host-ip" placeholder="" data-post_key="host" required>
+                                <div class="input-group-append">
+                                    <div class="input-group-text">{{_('dev_server_port')}}</div>
+                                </div>
+                                <input type="text" class="form-control form-control-host col-auto col-sm-4 col-md-4 col-lg-2 col-xl-2" id="input-host-port" placeholder="" data-post_key="port" required>
+                                <button type="button" class="btn btn-primary" id="btn-modal-host-submit">{{_('btn_submit')}}</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <!-- camera -->
+                <hr>
+                <form class="form needs-validation was-validated" novalidate>
+                    <div class="form-row">
+                        <div class="form-group col-auto">
+                            <label for="input-uplight" class="col-form-label">
+                                {{_('Camera Setting')}}<small class="text-danger">※</small></label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">{{_('uplight')}}</div>
+                                </div>
+                                <input type="number" class="form-control form-control-camera col-auto col-sm-2 col-md-2 col-lg-2 col-xl-2" id="input-uplight" placeholder="" data-post_key="uplight" required>
+                                <div class="input-group-append">
+                                    <div class="input-group-text">{{_('downlight')}}</div>
+                                </div>
+                                <input type="number" class="form-control form-control-camera col-auto col-sm-2 col-md-2 col-lg-2 col-xl-2" id="input-downlight" placeholder="" data-post_key="downlight" required>
+                                <div class="input-group-append">
+                                    <div class="input-group-text">{{_('flash_time')}}</div>
+                                </div>
+                                <input type="number" class="form-control form-control-camera col-auto col-sm-2 col-md-2 col-lg-2 col-xl-2" id="input-flash_time" min="0" max="255" placeholder="" data-post_key="flash_time" required>
+                                <button type="button" class="btn btn-primary" id="btn-camera-submit">{{_('btn_submit')}}</button>
+                            </div>
+                            <span class="help-block"><small>{{_('flash_time')}} max value: 255</small></span>
+                        </div>
+                    </div>
+                </form>
+                <!-- ocr thd -->
+                <hr>
+                <form class="form needs-validation was-validated" novalidate>
+                    <div class="form-row">
+                        <div class="form-group col-auto">
+                            <label for="input-k1" class="col-form-label">
+                                {{_('OCR thd Setting')}}<small class="text-danger">※</small></label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">{{_('k1')}}</div>
+                                </div>
+                                <input type="number" class="form-control form-control-ocr-thd col-auto col-sm-2 col-md-2 col-lg-2 col-xl-2" id="input-k1" placeholder="" data-post_key="k1" required>
+                                <div class="input-group-append">
+                                    <div class="input-group-text">{{_('k2')}}</div>
+                                </div>
+                                <input type="number" class="form-control form-control-ocr-thd col-auto col-sm-2 col-md-2 col-lg-2 col-xl-2" id="input-k2" placeholder="" data-post_key="k2" required>
+                                <div class="input-group-append">
+                                    <div class="input-group-text">{{_('win1')}}</div>
+                                </div>
+                                <input type="number" class="form-control form-control-ocr-thd col-auto col-sm-2 col-md-2 col-lg-2 col-xl-2" id="input-win1" placeholder="" data-post_key="window1" required>
+                                <div class="input-group-append">
+                                    <div class="input-group-text">{{_('win2')}}</div>
+                                </div>
+                                <input type="number" class="form-control form-control-ocr-thd col-auto col-sm-2 col-md-2 col-lg-2 col-xl-2" id="input-win2" placeholder="" data-post_key="window2" required>
+                                <button type="button" class="btn btn-primary" id="btn-thd-submit">{{_('btn_submit')}}</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <!-- ocr mode -->
+                <hr>
+                <form class="form needs-validation was-validated" novalidate>
+                    <div class="form-row">
+                        <div class="form-group col-auto">
+                            <label for="input-digital" class="col-form-label">
+                                {{_('OCR mode Setting')}}<small class="text-danger">※</small></label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">{{_('digital_number')}}</div>
+                                </div>
+                                <input type="number" class="form-control form-control-ocr-mode col-auto col-sm-2 col-md-2 col-lg-2 col-xl-2" id="input-digital" placeholder="" data-post_key="digital_number" required>
+                                <div class="input-group-append">
+                                    <div class="input-group-text">{{_('frame_cut_flag')}}</div>
+                                </div>
+                                <input type="number" class="form-control form-control-ocr-mode col-auto col-sm-2 col-md-2 col-lg-2 col-xl-2" id="input-frame_cut_flag" placeholder="" data-post_key="frame_cut_flag" required>
+                                <div class="input-group-append">
+                                    <div class="input-group-text">{{_('model_flag')}}</div>
+                                </div>
+                                <input type="number" class="form-control form-control-ocr-mode col-auto col-sm-2 col-md-2 col-lg-2 col-xl-2" id="input-model_flag" placeholder="" data-post_key="model_flag" required>
+                                <div class="input-group-append">
+                                    <div class="input-group-text">{{_('dnn_threshhold')}}</div>
+                                </div>
+                                <input type="number" class="form-control form-control-ocr-thd col-auto col-sm-2 col-md-2 col-lg-2 col-xl-2" id="input-dnn_threshhold" placeholder="" data-post_key="dnn_threshhold" required>
+                                <button type="button" class="btn btn-primary" id="btn-ocr-mode-submit">{{_('btn_submit')}}</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <!-- compress level -->
+                <hr>
+                <form class="form needs-validation was-validated" novalidate>
+                    <div class="form-row">
+                        <div class="form-group col-auto">
+                            <label for="input-compress-rtc-low" class="col-form-label">
+                                <small class="text-danger">※</small>{{_('RTC')}}</label>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="config-compress-rtc" id="input-compress-rtc-low" value="low">
+                                <label class="form-check-label" for="input-compress-rtc-low">{{_('low')}}</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="config-compress-rtc" id="input-compress-rtc-high" value="high">
+                                <label class="form-check-label" for="input-compress-rtc-high">{{_('high')}}</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-auto">
+                            <label for="input-compress-proof-low" class="col-form-label">
+                                <small class="text-danger">※</small>{{_('Proof')}}</label>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="config-compress-proof" id="input-compress-proof-low" value="low">
+                                <label class="form-check-label" for="input-compress-proof-low">{{_('low')}}</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="config-compress-proof" id="input-compress-proof-high" value="high">
+                                <label class="form-check-label" for="input-compress-proof-high">{{_('high')}}</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-auto">
+                            <label for="input-compress-failed-low" class="col-form-label">
+                                <small class="text-danger">※</small>{{_('Failed')}}</label>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="config-compress-failed" id="input-compress-failed-low" value="low">
+                                <label class="form-check-label" for="input-compress-failed-low">{{_('low')}}</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="config-compress-failed" id="input-compress-failed-medium" value="medium">
+                                <label class="form-check-label" for="input-compress-failed-medium">{{_('medium')}}</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="config-compress-failed" id="input-compress-failed-high" value="high">
+                                <label class="form-check-label" for="input-compress-failed-high">{{_('high')}}</label>
+                            </div>
+                            <button type="button" class="btn btn-primary" id="btn-compress-submit">{{_('btn_submit')}}</button>
+                        </div>
+                    </div>
+                </form>
+            </div><!-- /.modal-body -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">{{_('btn_close')}}</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- ocr-param-modal -->
+<div id="ctrl-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="false">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div><!-- /.modal-header -->
+            <div class="modal-body">
+                <form class="form needs-validation was-validated" novalidate>
+                    <div class="form-row">
+                        <div class="form-group col-auto">
+                            <label for="input-config-control-lock-on" class="col-form-label">
+                                <small class="text-danger">※</small>{{_('dev_config_control_lock')}}</label>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="config-control-lock" id="input-config-control-lock-on" value="1">
+                                <label class="form-check-label" for="input-config-control-lock-on">On</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="config-control-lock" id="input-config-control-lock-off" value="0">
+                                <label class="form-check-label" for="input-config-control-lock-off">Off</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-auto">
+                            <label for="input-config-control-sendimage-on" class="col-form-label">
+                                <small class="text-danger">※</small>{{_('dev_config_control_sendimage')}}</label>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="config_control_sendimage" id="input-config-control-sendimage-on" value="1">
+                                <label class="form-check-label" for="input-config-control-sendimage-on">On</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="config_control_sendimage" id="input-config-control-sendimage-off" value="0">
+                                <label class="form-check-label" for="input-config-control-sendimage-off">Off</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-auto">
+                            <label for="input-config-control-ota-on" class="col-form-label">
+                                <small class="text-danger">※</small>{{_('dev_config_control_ota')}}</label>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="config_control_ota" id="input-config-control-ota-on" value="1">
+                                <label class="form-check-label" for="input-config-control-ota-on">On</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="config_control_ota" id="input-config-control-ota-off" value="0">
+                                <label class="form-check-label" for="input-config-control-ota-off">Off</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-auto">
+                            <label for="input-config-control-log-save-on" class="col-form-label">
+                                <small class="text-danger">※</small>{{_('dev_config_control_log_save')}}</label>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="config_control_log_save" id="input-config-control-log-save-on" value="1">
+                                <label class="form-check-label" for="input-config-control-log-save-on">On</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="config_control_log_save" id="input-config-control-log-save-off" value="0">
+                                <label class="form-check-label" for="input-config-control-log-save-off">Off</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-auto">
+                            <label for="input-config-control-log-debug" class="col-form-label">
+                                <small class="text-danger">※</small>{{_('dev_config_control_log_level')}}</label>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="config_control_log_level" id="input-config-control-log-debug" value="1">
+                                <label class="form-check-label" for="input-config-control-log-debug">Debug</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="config_control_log_level" id="input-config-control-log-info" value="3">
+                                <label class="form-check-label" for="input-config-control-log-info">Info</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="config_control_log_level" id="input-config-control-log-warn" value="2">
+                                <label class="form-check-label" for="input-config-control-log-warn">Warn</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="config_control_log_level" id="input-config-control-log-error" value="4">
+                                <label class="form-check-label" for="input-config-control-log-error">Error</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-auto">
+                            <label for="input-config-control-passive-send-on" class="col-form-label">
+                                <small class="text-danger">※</small>{{_('dev_config_control_passive_send')}}</label>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="config_control_passive_send" id="input-config-control-passive-send-on" value="1">
+                                <label class="form-check-label" for="input-config-control-passive-send-on">On</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="config_control_passive_send" id="input-config-control-passive-send-off" value="0">
+                                <label class="form-check-label" for="input-config-control-passive-send-off">Off</label>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div><!-- /.modal-body -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">{{_('btn_cancel')}}</button>
+                <button type="button" class="btn btn-primary" id="btn-modal-ctrl-submit">{{_('btn_submit')}}</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- ocr-param-modal -->
+{%- endblock page_modal %}
+
+{%- block page_script %}
+<script src="{{ url_for('static', filename='js/jquery.fileDownload.js') }}"></script>
+<script src="{{ url_for('static', filename='js/devices.js') }}"></script>
+{%- endblock page_script %}

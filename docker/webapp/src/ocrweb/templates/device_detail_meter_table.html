@@ -1,0 +1,62 @@
+{% for meter in meters | reverse -%}
+    <tr>
+        <td>
+            <span class="text-muted font-13">{{ loop.index }}</span>
+        </td>
+        <td>
+            <i class="mdi {{'mdi-alert-circle text-danger font-16' if meter.is_err else 'mdi-blank'}}" data-toggle="tooltip" data-placement="left" title="{{meter.is_err}}"></i>
+            <span class="text-muted font-13">{{ meter.se_id }}</span>
+        </td>
+        <td>
+            <span class="text-muted font-13">{{ meter.date }}</span>
+        </td>
+        <td>
+            <span class="text-muted font-13">{{ meter.value }}</span>
+        </td>
+        <td class="d-none">
+            <span class="text-muted font-13 text-success">
+                {% if meter.grow > 0 %}
+                <i class="mdi mdi-arrow-up-bold"></i>{{ meter.grow }}
+                {% endif %}
+                {% if meter.grow < 0 %}
+                <i class="mdi mdi-arrow-down-bold"></i>{{ meter.grow }}
+                {% endif %}
+            </span>
+        </td>
+        <td class="d-none">
+            {% if meter.rawdata.Da %}
+            <span class="text-muted font-13">{{ meter.rawdata.Da }} {{ meter.rawdata.Ti }}</span>
+            {% else %}
+            <span class="text-muted font-13">{{ meter.rawdata.DaTi }}</span>
+            {% endif %}
+        </td>
+        <td>
+            {% if meter.rawdata.SP == 0 %}
+            <span class="text-muted font-13">{{ meter.rawdata.SP }}</span>
+            {% else %}
+            <span class="text-muted font-13">-{{ 65535 - meter.rawdata.SP }}</span>
+            {% endif %}
+        </td>
+        <td>
+            <span class="text-muted font-13">{{ meter.rawdata.SNR }}</span>
+        </td>
+        <td>
+            {% if meter.rawdata.RSRQ == 0 %}
+            <span class="text-muted font-13">{{ meter.rawdata.RSRQ }}</span>
+            {% else %}
+            <span class="text-muted font-13">-{{ 65535 - meter.rawdata.RSRQ }}</span>
+            {% endif %}
+        </td>
+        <td>
+            <span class="text-muted font-13">{{ meter.rawdata.FCN }}</span>
+        </td>
+        <td class="d-none">
+            <span class="text-muted font-13">{{ meter.rawdata.POW }}</span>
+        </td>
+        <td>
+            {% if meter.img_url -%}
+            <img height="24" class="img-rounded meter-img" src="{{url_for('static', filename=meter.img_url)}}?ver={{random}}" alt="no image" data-img-url="{{url_for('static', filename=meter.img_url)}}">
+            {%- endif %}
+        </td>
+    </tr>
+{%- endfor %}
