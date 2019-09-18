@@ -1,0 +1,7 @@
+docker/mysql/dbfile/
+docker/webapp/src/.idea/
+docker/webapp/src/__pycache__/
+docker/webapp/src/meter.pid
+docker/webapp/src/meter_db/__pycache__/
+docker/webapp/src/ocrweb/__pycache__/
+docker/redis/

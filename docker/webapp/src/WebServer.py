@@ -17,13 +17,13 @@ app = Flask(__name__, static_url_path=static_url_path, instance_path=url_prefix)
 app.config['SECRET_KEY'] = os.getenv('FLASK_SECRET_KEY')
 app.config['JSONIFY_MIMETYPE'] = 'application/json; charset=utf-8'
 app.config['APPLICATION_ROOT'] = url_prefix
+app.config['URL_PREFIX'] = url_prefix
+app.config['domain'] = prod.domain
 CORS(app)
 Gzip(app)
 PocWebapp(app=app, url_prefix=url_prefix)
 babel = Babel(app=app)
 
-app.config['URL_PREFIX'] = url_prefix
-app.config['domain'] = prod.domain
 
 
 @babel.localeselector
