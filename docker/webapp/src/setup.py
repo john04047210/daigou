@@ -49,11 +49,9 @@ install_requires = [
     'Blinker>=1.4',
     'Werkzeug>=0.14.1',
     'lxml>=4.3.3',
-    'Pillow>=6.0.0',
     'openpyxl>=2.6.2',
     'paho-mqtt>=1.4.0',
     'requests>=2.22.0',
-    'numpy>=1.16.4',
 ]
 
 packages = find_packages()

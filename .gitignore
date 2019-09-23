@@ -5,3 +5,4 @@ docker/webapp/src/meter.pid
 docker/webapp/src/meter_db/__pycache__/
 docker/webapp/src/ocrweb/__pycache__/
 docker/redis/
+docker/webapp/src/.eggs/
