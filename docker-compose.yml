@@ -63,7 +63,7 @@ services:
     ports:
       - 8002:80
     volumes:
-      - ./docker/nginx/conf.d/app.conf:/etc/nginx/conf.d/app.conf
+      - ./docker/nginx/conf.d/webapp.conf:/etc/nginx/conf.d/app.conf
       - ./docker/nginx/html:/usr/share/nginx/html
     depends_on:
       - webapp
