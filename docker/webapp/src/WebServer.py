@@ -14,7 +14,7 @@ url_prefix = prod.url_prefix
 static_url_path = '{}/static'.format(url_prefix) if url_prefix else None
 
 app = Flask(__name__, static_url_path=static_url_path, instance_path=url_prefix)
-app.config['SECRET_KEY'] = os.getenv('FLASK_SECRET_KEY')
+app.config['SECRET_KEY'] = os.getenv('FLASK_SECRET_KEY', 'testdemo12345678')
 app.config['JSONIFY_MIMETYPE'] = 'application/json; charset=utf-8'
 app.config['APPLICATION_ROOT'] = url_prefix
 app.config['URL_PREFIX'] = url_prefix
