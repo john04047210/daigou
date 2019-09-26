@@ -2,6 +2,7 @@
 
 from __future__ import absolute_import, print_function
 
+from datetime import datetime
 from flask_login import UserMixin
 from sqlalchemy import asc, desc
 
@@ -32,8 +33,34 @@ class DataBaseOptMixin(object):
         return self
 
 
-from meter_db.basedb import DaigouBuyer as _DaigouBuyer
-class DaigouBuyer(db.Model, _DaigouBuyer, DataBaseOptMixin):
+class TimestampMixin(object):
+    """Timestamp model mix-in with fractional seconds support."""
+    created = db.Column(db.DateTime, nullable=False, default=datetime.now)
+    """Creation timestamp."""
+
+    updated = db.Column(db.DateTime, nullable=False, default=datetime.now,
+                     onupdate=datetime.now)
+    """Updated timestamp."""
+
+    status = db.Column(db.String(1), nullable=False, default='N', onupdate='U')
+    """Updated timestamp."""
+
+
+class DaigouBuyer(db.Model, TimestampMixin, DataBaseOptMixin):
+    """ 客户信息 收件地址 """
+    __tablename__ = 'daigou_buyer'
+
+    id = db.Column(db.Integer(), primary_key=True)
+    name = db.Column(db.String(32), index=True, nullable=False, comment='收件人姓名')
+    phone = db.Column(db.String(11), index=True, nullable=False, comment='收件人电话')
+    wx_name = db.Column(db.String(32), nullable=True, default='', comment='收件人微信昵称')
+    address = db.Column(db.String(254), nullable=False, default='', comment='收件人地址')
+    post_code = db.Column(db.String(32), nullable=True, default='', comment='收件人邮编')
+
+    def __init__(self, name=None, phone=None, dev_rate=1.0, dev_rawdata='{}'):
+        self.name = name
+        self.phone = phone
+
     def __str__(self):
         return '<user info name:{name}(wx_name) phone:{phone} address:{add}>'.format(
             name=self.name, wx_name=self.wx_name, phone=self.phone, add=self.address)
@@ -70,8 +97,18 @@ class DaigouBuyer(db.Model, _DaigouBuyer, DataBaseOptMixin):
         return cls.query.filter_by(phone=buyer_phone).one_or_none()
 
 
-from meter_db.basedb import User as _User
-class User(db.Model, _User, UserMixin):
+class User(db.Model, TimestampMixin, UserMixin):
+    __tablename__ = 'user'
+
+    id = db.Column(db.Integer(), primary_key=True)
+    email = db.Column(db.String(255), unique=True, nullable=False)
+    password = db.Column(db.String(32), nullable=False)
+    nickname = db.Column(db.String(64), nullable=True, default='')
+    portrait = db.Column(db.String(255), nullable=True, default='')
+    """head image"""
+    active = db.Column(db.Boolean(name='active'), default=False)
+    admin = db.Column('admin', db.Boolean(name='admin'), default=False)
+
     @property
     def is_active(self):
         return True if self.active else False

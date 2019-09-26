@@ -31,11 +31,18 @@ def set_locale(language='en'):
     return jsonify({'code': 0, 'msg': 'success'})
 
 
+@blueprint.route('/index')
+@login_required
+def index():
+    return jsonify({'code': 0, 'msg': 'success', 'data': {
+        'is_admin': current_user.is_admin, 'is_active': current_user.is_active}})
+
+
 @blueprint.route('/render/buyers', methods=['GET'])
 @blueprint.route('/render/buyers<int:buyer_id>', methods=['GET'])
 @login_required
 def render_devices_list(buyer_id=None):
-    devices = PocApi.get_record_detail(dev_id=buyer_id)
+    devices = PocApi.get_all_buyer()
     babel_language = _get_language()
     return render_template(
         'devices.html',
@@ -88,3 +95,14 @@ def logout():
 def login_test():
     return jsonify({'code': 0, 'msg': 'success', 'data': {
         'is_admin': current_user.is_admin, 'is_active': current_user.is_active}})
+
+
+@blueprint.app_errorhandler(404)
+@login_required
+def page_not_found(ex):
+    babel_language = _get_language()
+    return render_template(
+        'page_404.html',
+        babel_language=babel_language,
+        prefix=current_app.config['URL_PREFIX'],
+    ), 404

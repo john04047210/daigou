@@ -47,6 +47,7 @@ install_requires = [
     'Flask-gzip>=0.2',
     'SQLAlchemy>=1.2.17',
     'SQLAlchemy-Utils>=0.33.11',
+    'PyMySQL>=0.9.3',
     'Blinker>=1.4',
     'Werkzeug>=0.14.1',
     'lxml>=4.3.3',

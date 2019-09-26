@@ -8,6 +8,7 @@ from .models import DaigouBuyer as DBBuyer
 class PocApi:
     @classmethod
     def get_all_buyer(cls):
+        """ return all buyer info """
         rst = []
         buyers = DBBuyer.get_all_buyer()
         for buyer in buyers:

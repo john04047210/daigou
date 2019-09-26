@@ -35,7 +35,7 @@ class PocWebapp(object):
 
     def init_login_manager(self, app):
         login_manager = LoginManager(app=app)
-        login_manager.login_view = '/{domain}/login'.format(domain=app.config['domain'])
+        login_manager.login_view = '{domain}/login'.format(domain=app.config['URL_PREFIX'])
 
         @login_manager.user_loader
         def load_user(userid):
