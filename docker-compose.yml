@@ -3,9 +3,11 @@ version: '3.2'
 services:
   webapp:
     build: ./docker/webapp
-    container_name: webapp
+    container_name: daigou_webapp
     restart: always
     command: ["uwsgi", "--ini", "/code/uwsgi.ini"]
+    networks:
+      - backend
     depends_on:
       - db
       - cache
@@ -24,10 +26,11 @@ services:
 
   db:
     build: ./docker/mysql
+    container_name: daigou_mysql
     restart: always
+    networks:
+      - backend
     command: ["mysqld", "--character-set-server", "utf8", "--collation-server", "utf8_unicode_ci"]
-    ports:
-      - 3306:3306
     environment:
       MYSQL_DATABASE: daigou
       MYSQL_USER: daigou
@@ -40,30 +43,45 @@ services:
 
   cache:
     image: redis:5.0
+    container_name: daigou_cache
     restart: always
     command: ["redis-server", "--appendonly", "yes", "--requirepass", "ocrmeter123"]
     ports:
       - 127.0.0.1:6379:6379
+    networks:
+      - backend
     volumes:
       - ./docker/redis/data:/data
 
   mqtt:
     image: rabbitmq:3.7
+    container_name: daigou_mqtt
     restart: always
     ports:
       - 127.0.0.1:5672:5672
       - 127.0.0.1:15672:15672
+    networks:
+      - backend
     environment:
       RABBITMQ_DEFAULT_USER: daigou
       RABBITMQ_DEFAULT_PASS: daigou123
 
   nginx:
     image: nginx
+    container_name: daigou_nginx
     restart: always
     ports:
       - 8002:80
+    networks:
+      - proxy
+      - backend
     volumes:
       - ./docker/nginx/conf.d/webapp.conf:/etc/nginx/conf.d/app.conf
       - ./docker/nginx/html:/usr/share/nginx/html
     depends_on:
       - webapp
+
+networks:
+    proxy:
+        external: true
+    backend:
