@@ -49,45 +49,36 @@
                             <thead>
                                 <tr>
                                     <th>{{_('page_table_title_no')}}</th>
-                                    <th>{{_('page_table_title_device_state')}}</th>
-                                    <th>{{_('page_table_title_device_id')}}</th>
-                                    <th>{{_('page_table_title_device_name')}}</th>
-                                    {% if current_user.is_admin -%}
-                                    <th>{{_('user')}}</th>
-                                    {%- endif%}
-                                    <th>{{_('page_table_title_device_type')}}</th>
-                                    <th>{{_('page_table_title_device_rate')}}</th>
-                                    <th>{{_('page_table_title_device_meter_power')}}</th>
-                                    <th>{{_('page_table_title_device_operator')}}</th>
-                                    <th>{{_('page_table_title_device_address')}}</th>
-                                    <th>{{_('page_table_title_device_comment')}}</th>
-                                    <th>{{_('page_table_title_update_time')}}</th>
+                                    <th>收件人姓名</th>
+                                    <th>收件人电话</th>
+                                    <th>微信昵称</th>
+                                    <th>收件人地址</th>
                                     <th>
                                         {% if current_user.is_admin -%}
-                                        <button type="button" class="btn btn-primary btn-device-new d-none d-xl-block">{{_('btn_device_create')}}</button>
-                                        <a href="javascript:void(0);" class="action-icon btn-device-new d-block d-xl-none text-lg-left"> <i class="mdi mdi-plus-circle-outline"></i></a>
+                                        <button type="button" class="btn btn-primary btn-buyer-new d-none d-xl-block">追加</button>
+                                        <a href="javascript:void(0);" class="action-icon btn-buyer-new d-block d-xl-none text-lg-left"> <i class="mdi mdi-plus-circle-outline"></i></a>
                                         {%- endif%}
                                     </th>
                                 </tr>
                             </thead>
                             <tbody>
-                            {% for device in devices -%}
+                            {% for buyer in buyers -%}
                                 <tr>
                                     <td>
                                         <span class="text-muted font-13">{{ loop.index }}</span>
                                     </td>
                                     <td>
-                                        <span class="text-muted font-13" id="dev_id_{{device.dev_state}}">{{ device.dev_state_desc }}</span>
+                                        <span class="text-muted font-13" id="buyer_name_{{buyer.id}}">{{ device.dev_state_desc }}</span>
                                     </td>
                                     <td>
-                                        <span class="text-muted font-13" id="dev_id_{{device.dev_id}}">{{ device.dev_id }}</span>
+                                        <span class="text-muted font-13" id="buyer_phone_{{buyer.id}}">{{ device.dev_id }}</span>
                                     </td>
                                     <td>
-                                        <span class="text-muted font-13" id="dev_name_{{device.dev_id}}">{{ device.dev_name }}</span>
+                                        <span class="text-muted font-13" id="buyer_wx_{{buyer.id}}">{{ device.dev_name }}</span>
                                     </td>
                                     {% if current_user.is_admin -%}
                                     <td>
-                                        <span class="text-muted font-13" id="user_name_{{device.dev_id}}">{{ device.user_name }}</span>
+                                        <span class="text-muted font-13" id="buyer_addr_{{buyer.id}}">{{ device.user_name }}</span>
                                     </td>
                                     {%- endif%}
                                     <td>
@@ -220,115 +211,28 @@
                     </div>
                     <div class="form-row">
                         <div class="form-group col-auto">
-                            <label for="input-devtype" class="col-form-label">
+                            <label for="input-phone" class="col-form-label">
                                 收件人电话<small class="text-danger">※</small></label>
-                            <select class="form-control" id="input-devtype" data-post_key="dev_type" required>
-                                <option value="1001">{{_('dev_type_electric')}}</option>
-                                <option value="1002">{{_('dev_type_water')}}</option>
-                                <option value="1003">{{_('dev_type_gas')}}</option>
-                                <option value="1004">{{_('dev_type_electric_digit')}}</option>
-                            </select>
+                            <input type="text" class="form-control" id="input-phone" data-post_key="phone" required>
                         </div>
                         <div class="form-group col-auto">
-                            <label for="input-devrate" class="col-form-label">{{_('dev_rate')}}</label>
-                            <input type="text" class="form-control" id="input-devrate" placeholder="1.0" data-post_key="dev_rate" required>
+                            <label for="input-wx_name" class="col-form-label">微信昵称</label>
+                            <input type="text" class="form-control" id="input-wx_name" placeholder="" data-post_key="wx_name">
                         </div>
                         <div class="form-group col-auto">
-                            <label for="input-devmetervalue" class="col-form-label">{{_('dev_meter_value')}}</label>
-                            <input type="text" class="form-control" id="input-devmetervalue" placeholder="0" data-post_key="dev_meter_value">
+                            <label for="input-post_code" class="col-form-label">收件人邮编</label>
+                            <input type="text" class="form-control" id="input-post_code" placeholder="" data-post_key="post_code">
                         </div>
                         <div class="form-group col-auto">
-                            <label for="input-config-ocr-inter" class="col-form-label">
-                                {{_('dev_config')}}<small class="text-danger">※</small></label>
-                            <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <div class="input-group-text">{{_('dev_config_ocr_inter')}}</div>
-                                </div>
-                                <input type="text" class="form-control col-auto col-sm-4 col-md-4 col-lg-2 col-xl-2" id="input-config-ocr-inter" placeholder="Minute(s)" data-post_key="dev_config_ocr_inter" rrequired>
-                                <div class="input-group-append">
-                                    <div class="input-group-text">{{_('dev_config_uplink_inter')}}</div>
-                                </div>
-                                <input type="text" class="form-control col-auto col-sm-6 col-md-6 col-lg-4 col-xl-4" id="input-config-uplink-inter" placeholder="Hour(s)" data-post_key="dev_config_uplink_inter" rrequired>
-                            </div>
-                            <span class="help-block"><small>Unit: OCR(M) Uplink(H)</small></span>
+                            <label for="input-address" class="col-form-label">收件人地址</label>
+                            <textarea class="form-control" id="input-address" rows="3" data-post_key="address"></textarea>
                         </div>
-                        <div class="form-group col-auto">
-                            <label for="input-operator" class="col-form-label">
-                                {{_('dev_operator')}}<small class="text-danger">※</small></label>
-                            <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <div class="input-group-text">{{_('dev_operator_code')}}</div>
-                                </div>
-                                <input type="text" class="form-control col-auto col-sm-4 col-md-4 col-lg-2 col-xl-2" id="input-operator" placeholder="" data-post_key="dev_operator_code" rrequired>
-                                <div class="input-group-append">
-                                    <div class="input-group-text">{{_('dev_operator_name')}}</div>
-                                </div>
-                                <input type="text" class="form-control col-auto col-sm-6 col-md-6 col-lg-4 col-xl-4" id="input-operator-name" placeholder="" data-post_key="dev_operator" rrequired>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="input-devpostcode" class="col-form-label">
-                            {{_('dev_postcode')}}<small class="text-danger">※</small></label>
-                        <div class="input-group">
-                            <input type="text" class="form-control col-4 col-sm-4 col-md-4 col-lg-3 col-xl-2" id="input-devpostcode" placeholder="000" data-post_key="dev_postcode" rrequired>
-                            <div class="input-group-append">
-                                <div class="input-group-text"> - </div>
-                            </div>
-                            <input type="text" class="form-control col-6 col-sm-6 col-md-6 col-lg-4 col-xl-3" id="input-devpostcode-next" placeholder="0000" data-post_key="dev_postcode" data-append="-" rrequired>
-                        </div>
-                    </div>
-                    <div class="form-group mb-0">
-                        <label for="input-devaddress01" class="col-form-label">
-                            {{_('dev_address')}}<small class="text-danger">※</small></label>
-                        <div class="input-group">
-                            <div class="form-group col-md-3 pl-0">
-                                <label for="input-devaddress01" class="col-form-label sr-only"></label>
-                                <input type="text" class="form-control" id="input-devaddress01" placeholder="{{_('dev_address01')}}" data-post_key="dev_address01" rrequired>
-                            </div>
-                            <div class="form-group col-md-4 pl-0">
-                                <label for="input-devaddress02" class="col-form-label sr-only"></label>
-                                <input type="text" class="form-control" id="input-devaddress02" placeholder="{{_('dev_address02')}}" data-post_key="dev_address02" rrequired>
-                            </div>
-                            <div class="form-group col-md-4 pl-0">
-                                <label for="input-devaddress03" class="col-form-label sr-only"></label>
-                                <input type="text" class="form-control" id="input-devaddress03" placeholder="{{_('dev_address03')}}" data-post_key="dev_address03" rrequired>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="input-devaddress04" class="col-form-label sr-only"></label>
-                        <div class="input-group">
-                            <input type="number" min="1" class="form-control col-4 col-sm-4 col-md-2 col-lg-2 col-xl-2" id="input-devaddress04" placeholder="0" data-post_key="dev_address04" rrequired>
-                            <div class="input-group-append">
-                                <div class="input-group-text pl-0">{{_('dev_address04')}}</div>
-                            </div>
-                            <input type="number" min="1" class="form-control col-4 col-sm-4 col-md-2 col-lg-2 col-xl-2" id="input-devaddress05" placeholder="0" data-post_key="dev_address05" rrequired>
-                            <div class="input-group-append">
-                                <div class="input-group-text pl-0">{{_('dev_address05')}}</div>
-                            </div>
-                            <input type="number" min="1" class="form-control col-4 col-sm-4 col-md-2 col-lg-2 col-xl-2" id="input-devaddress06" placeholder="0" data-post_key="dev_address06" rrequired>
-                            <div class="input-group-append">
-                                <div class="input-group-text pl-0">{{_('dev_address06')}}</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="input-devaddress04" class="col-form-label sr-only"></label>
-                        <div class="input-group">
-                            <input type="text" class="form-control col-8 col-sm-8 col-md-4 col-lg-4 col-xl-4" id="input-devaddress07" placeholder="{{_('dev_address07')}}" data-post_key="dev_address07">
-                            <input type="text" class="form-control col-4 col-sm-4 col-md-2 col-lg-2 col-xl-2" id="input-devaddress08" placeholder="{{_('dev_address08')}}" data-post_key="dev_address08">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="input-devcomment" class="col-form-label">{{_('dev_comment')}}</label>
-                        <textarea class="form-control" id="input-devcomment" rows="3" data-post_key="dev_comment"></textarea>
                     </div>
                 </form>
             </div><!-- /.modal-body -->
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">{{_('btn_cancel')}}</button>
-                <button type="button" class="btn btn-primary" id="btn-modal-device-submit">{{_('btn_submit')}}</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" id="btn-modal-submit">提交</button>
             </div>
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->

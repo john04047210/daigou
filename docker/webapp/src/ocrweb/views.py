@@ -42,13 +42,13 @@ def index():
 @blueprint.route('/render/buyers<int:buyer_id>', methods=['GET'])
 @login_required
 def render_devices_list(buyer_id=None):
-    devices = PocApi.get_all_buyer()
+    buyers = PocApi.get_all_buyer()
     babel_language = _get_language()
     return render_template(
         'devices.html',
         babel_language=babel_language,
         prefix=current_app.config['URL_PREFIX'],
-        devices=devices
+        buyers=buyers
     )
 
 
