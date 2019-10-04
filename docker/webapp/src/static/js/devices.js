@@ -30,16 +30,14 @@ $(function(){
         $.fileDownload(pro_name+'/api/device/download/?format='+file_format+'&start='+date_start[2]+'-'+date_start[0]+'-'+date_start[1]+' 00:00:00&end='+date_end[2]+'-'+date_end[0]+'-'+date_end[1]+' 23:59:59');
     });
 
-    $('.wrapper').on('click', '.btn-device-new', function(e){
+    $('.wrapper').on('click', '.btn-buyer-new', function(e){
         e.preventDefault();
         dev_update_mode = 'new';
         $('.modal-body .form-control').each(function() {
             $(this).val('');
         });
-        $('#input-devid').attr('readonly', false);
-        $('#input-devrate').attr('readonly', false);
-        $('#input-devtype').val('1001');
-        $('.modal-title').text('追加設備');
+        $('#input-buyer-id').attr('readonly', true);
+        $('.modal-title').text('添加收件人信息');
         $('#info-modal').modal({
             'backdrop': 'static',
             'keyboard': false,
@@ -47,27 +45,19 @@ $(function(){
         });
     });
 
-    $('.wrapper').on('click', '.btn-device-edit', function(e){
+    $('.wrapper').on('click', '.btn-buyer-edit', function(e){
         e.preventDefault();
         dev_update_mode = 'edit';
-        let dev_id = $(this).data('devid');
-        $('#input-devid').val(dev_id);
-        $('#input-devid').attr('readonly', true);
+        let buyerid = $(this).data('buyerid');
+        $('#input-buyer-id').val(buyerid);
+        $('#input-buyer-id').attr('readonly', true);
         $('#info-modal .modal-body .form-control').each(function() {
             let post_key = $(this).data('post_key');
             if (post_key.length > 0) {
-                if ('dev_postcode' == post_key) {
-                    let postcode = $('#'+post_key+'_'+dev_id).text();
-                    if (postcode.length > 0) {
-                        $('#input-devpostcode').val(postcode.substring(0, 3));
-                        $('#input-devpostcode-next').val(postcode.substring(4, 8));
-                    }
-                } else {
-                    $(this).val($('#'+post_key+'_'+dev_id).text());
-                }
+                $(this).val($('#'+post_key+'_'+dev_id).text());
             }
         });
-        $('.modal-title').text('編集設備');
+        $('.modal-title').text('編集收件人信息');
         $('#info-modal').modal({
             'backdrop': 'static',
             'keyboard': false,

@@ -73,7 +73,8 @@ class DaigouBuyer(db.Model, TimestampMixin, DataBaseOptMixin):
             name=self.name,
             phone=self.phone,
             wx_name=self.wx_name,
-            address=self.address
+            address=self.address,
+            post_code=self.post_code
         )
 
     @classmethod
