@@ -54,7 +54,7 @@ $(function(){
         $('#info-modal .modal-body .form-control').each(function() {
             let post_key = $(this).data('post_key');
             if (post_key.length > 0) {
-                $(this).val($('#'+post_key+'_'+dev_id).text());
+                $(this).val($('#'+post_key+'_'+buyerid).text());
             }
         });
         $('.modal-title').text('編集收件人信息');
@@ -67,7 +67,6 @@ $(function(){
 
     $('#btn-modal-submit').on('click', function(e){
         e.preventDefault();
-        let dev_id = $('#input-devid').val();
         let post_data = {};
         $('#info-modal .modal-body .form-control').each(function() {
             let post_key = $(this).data('post_key');
@@ -85,9 +84,14 @@ $(function(){
             }
         });
         let http_method = 'edit' === dev_update_mode ? 'PUT' : 'POST';
+        let post_url = pro_name+'/api/buyer';
+        if ('edit' === dev_update_mode) {
+            let buyerid = $('#input-buyer-id').val();
+            post_url = post_url + '/' + buyerid;
+        }
         $.ajax({
             method: http_method,
-            url: pro_name+'/api/device/'+dev_id,
+            url: post_url,
             contentType: 'application/json; charset=UTF-8',
             data: JSON.stringify(post_data),
             success: function(data, textStatus, jqXHR) {

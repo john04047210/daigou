@@ -52,6 +52,30 @@ def render_devices_list(buyer_id=None):
     )
 
 
+@blueprint.route('/api/buyer', methods=['POST'])
+@login_required
+def api_new_buyer():
+    post_data = request.get_json()
+    buyer = PocApi.new_buyer(**post_data)
+    return jsonify({
+        'code': 0,
+        'msg': 'success',
+        'data': buyer
+    })
+
+
+@blueprint.route('/api/buyer/<int:buyer_id>', methods=['PUT'])
+@login_required
+def api_upt_buyer(buyer_id=None):
+    post_data = request.get_json()
+    buyer = PocApi.upt_buyer(buyer_id, **post_data)
+    return jsonify({
+        'code': 0,
+        'msg': 'success',
+        'data': buyer
+    })
+
+
 @blueprint.route('/login', methods=['GET', 'POST'])
 def login():
     err_msg = None
