@@ -1,0 +1,208 @@
+{%- extends 'base.html' %}
+
+{%- block page_body %}
+<div class="content-page">
+    <div class="content">
+        {% include 'page_header.html' %}
+
+        <!-- Start Content-->
+        <div class="container-fluid">
+            <!-- start page title -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="page-title-box">
+                        <div class="page-title-right">
+                            <div class="form-inline d-inline">
+                                <label class="d-none" for="range-date">Date</label>
+                                <input type="text" class="form-control date" id="range-date" data-toggle="date-picker" data-time-picker="true" data-locale="{'format': 'YYYY/MM/DD hh:mm A'}">
+                            </div>
+                            <div class="btn-group ml-2" role="group">
+                                <button id="btnGroupDrop1" type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="mdi mdi-download"></i>
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                                    <a href="javascript: void(0);" class="dropdown-item btn-download" data-file_format="txt">
+                                        <i class="mdi mdi-file-outline"></i>Text File
+                                    </a>
+                                    <a href="javascript: void(0);" class="dropdown-item btn-download" data-file_format="csv">
+                                        <i class="mdi mdi-file-document-box-outline"></i>CSV File
+                                    </a>
+                                    <a href="javascript: void(0);" class="dropdown-item btn-download" data-file_format="xlsx">
+                                        <i class="mdi mdi-file-table-outline"></i>Excel File
+                                    </a>
+                                </div>
+                            </div>
+                            <a href="javascript: void(0);" class="btn btn-primary ml-2" id="btn-refresh">
+                                <i class="mdi mdi-autorenew"></i>
+                            </a>
+                        </div>
+                        <h1 class="page-title display-4">{{_('page_device_list')}}</h1>
+                    </div>
+                </div>
+            </div>
+            <!-- end page title -->
+
+            <div class="row">
+                <div class="col-10">
+                    <div class="form-inline">
+                        <div class="form-group mb-2 stroke-list">
+                            <label for="stroke_list">行程</label>
+                                <select class="form-control" id="stroke_list">
+                                    {% for stroke in strokes -%}
+                                    <option value="{{ stroke.stroke_id }}">{{ stroke.stroke_name }}</option>
+                                    {%- endfor %}
+                                </select>
+                        </div>
+                        <div class="form-group mx-sm-3 mb-2 stroke-new d-none">
+                            <label for="stroke_add">行程</label>
+                            <input type="text" class="form-control" id="input-stroke-name" placeholder="">
+                        </div>
+                        <button type="button" class="btn btn-primary mb-2 btn-stroke-add">添加</button>
+                        <button type="button" class="btn btn-primary mb-2 btn-stroke-edit">编辑</button>
+                        <button type="button" class="btn btn-primary mb-2 btn-stroke-submit d-none">提交</button>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xl-12" id="device_list">
+                    <div class="table-responsive-sm">
+                        <table class="table table-sm table-centered table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>{{_('page_table_title_no')}}</th>
+                                    <th>订购者姓名</th>
+                                    <th>商品</th>
+                                    <th>收件地址</th>
+                                    <th>
+                                        <button type="button" class="btn btn-primary btn-goods-new d-none d-xl-block">追加</button>
+                                        <a href="javascript:void(0);" class="action-icon btn-goods-new d-block d-xl-none text-lg-left"> <i class="mdi mdi-plus-circle-outline"></i></a>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for book in books -%}
+                                <tr>
+                                    <td>
+                                        <span class="text-muted font-13">{{ loop.index }}</span>
+                                    </td>
+                                    <td>
+                                        <span class="text-muted font-13" id="book_name_{{book.id}}">{{ book.book_name }}</span>
+                                        <div class="form-group d-none edit-book-{{book.id}}">
+                                            <input type="text" class="form-control" id="input-book_name_{{book.id}}">
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="text-muted font-13" id="book_goods_{{book.id}}">{{ book.book_goods }}</span>
+                                        <div class="form-group d-none edit-book-{{book.id}}">
+                                            <textarea class="form-control" rows="3" id="input-book_goods_{{book.id}}"></textarea>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        {% if book.address -%}
+                                            <span class="text-muted font-16" id="book_address_{{book.id}}">{{ book.address }}</span><br>
+                                            <hr>
+                                            {% for address in book.addresses -%}
+                                            <div class="radio edit-book-{{book.id}}">
+                                              <label>
+                                                <input type="radio" name="book_address_{{book.id}}" id="book_address_{{ book.id }}_{{ address.id }}" value="{{ address.id }}" data-goodsid="{{book.id}}">
+                                                {{ address.name }}  {{ address.phone }} <br> {{ address.address }}
+                                              </label>
+                                            </div>
+                                            {%- else -%}
+                                                <a type="button" href="/master/render/buyers" target="_blank" class="btn btn-primary d-none d-xl-block">追加地址</a>
+                                                <a href="/master/render/buyers" target="_blank" class="action-icon d-block d-xl-none text-lg-left"> <i class="mdi mdi-plus-circle-outline"></i></a>
+                                            {%- endfor %}
+                                        {%- else -%}
+                                            {% for address in book.addresses -%}
+                                            <div class="radio edit-book-{{book.id}}">
+                                              <label>
+                                                <input type="radio" name="book_address_{{book.id}}" id="book_address_{{ book.id }}_{{ address.id }}" value="{{ address.id }}" data-goodsid="{{book.id}}">
+                                                {{ address.name }}  {{ address.phone }} <br> {{ address.address }}
+                                              </label>
+                                            </div>
+                                            {%- else -%}
+                                                <a type="button" href="/master/render/buyers" target="_blank" class="btn btn-primary d-none d-xl-block">追加地址</a>
+                                                <a href="/master/render/buyers" target="_blank" class="action-icon d-block d-xl-none text-lg-left"> <i class="mdi mdi-plus-circle-outline"></i></a>
+                                            {%- endfor %}
+                                        {%- endif %}
+                                    </td>
+                                    <td>
+                                        <div class="btn-group d-none d-xl-block">
+                                            <button type="button" class="btn btn-outline-info btn-sm btn-goods-edit btn-goods-edit-{{ book.id }}" data-goodsid="{{book.id}}">
+                                                <i class="mdi mdi-square-edit-outline"></i>编辑</button>
+                                            <button type="button" class="btn btn-outline-info btn-sm d-none btn-goods-edit-ok btn-goods-edit-ok-{{ book.id }}" data-goodsid="{{book.id}}">
+                                                <i class="mdi mdi-check-circle-outline"></i>提交</button>
+                                            <button type="button" class="btn btn-outline-info btn-sm d-none btn-goods-edit-cancel btn-goods-edit-cancel-{{ book.id }}" data-goodsid="{{book.id}}">
+                                                <i class="mdi mdi-close-circle-outline"></i>放弃</button>
+                                        </div>
+                                        <div class="table-action d-block d-xl-none">
+                                            <a href="javascript:void(0);" class="action-icon btn-goods-edit btn-goods-edit-{{ book.id }}" data-goodsid="{{book.id}}"> <i class="mdi mdi-square-edit-outline"></i></a>
+                                            <a href="javascript:void(0);" class="action-icon d-none btn-goods-edit-ok btn-goods-edit-ok-{{ book.id }}" data-goodsid="{{book.id}}"> <i class="mdi mdi-check-circle-outline"></i></a>
+                                            <a href="javascript:void(0);" class="action-icon d-none btn-goods-edit-cancel btn-goods-edit-cancel-{{ book.id }}" data-goodsid="{{book.id}}"> <i class="mdi mdi-close-circle-outline"></i></a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {%- endfor %}
+                            </tbody>
+                        </table>
+                    </div> <!-- end table-responsive-->
+                </div> <!-- end col -->
+            </div> <!-- end row -->
+
+        </div> <!-- container -->
+
+    </div> <!-- content -->
+
+    <!-- Footer Start -->
+    <footer class="footer">
+        {% include 'page_footer.html' %}
+    </footer>
+    <!-- end Footer -->
+</div>
+{%- endblock page_body %}
+
+{%- block page_modal %}
+<div id="info-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="false">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div><!-- /.modal-header -->
+            <div class="modal-body">
+                <form class="form needs-validation was-validated" novalidate>
+                    <div class="form-row">
+                        <div class="form-group col-auto d-none">
+                            <label for="input-book-id" class="col-form-label">
+                                订购ID<small class="text-danger">※</small></label>
+                            <input type="text" class="form-control" id="input-book-id" data-post_key="">
+                        </div>
+                        <div class="form-group col-auto col-sm-4 col-md-4 col-lg-2 col-xl-2">
+                            <label for="input-name" class="col-form-label">
+                                订购者姓名<small class="text-danger">※</small></label>
+                            <input type="text" class="form-control" id="input-name" data-post_key="book_name" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-10">
+                            <label for="input-orders" class="col-form-label">商品</label>
+                            <textarea class="form-control" id="input-orders" rows="3" data-post_key="book_goods" required></textarea>
+                        </div>
+                    </div>
+                </form>
+            </div><!-- /.modal-body -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="mdi mdi-close-circle-outline"></i>取消</button>
+                <button type="button" class="btn btn-primary" id="btn-modal-submit"><i class="mdi mdi-check-circle-outline"></i>提交</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+{%- endblock page_modal %}
+
+{%- block page_script %}
+<script src="{{ url_for('static', filename='js/jquery.fileDownload.js') }}"></script>
+<script src="{{ url_for('static', filename='js/books.js') }}"></script>
+{%- endblock page_script %}

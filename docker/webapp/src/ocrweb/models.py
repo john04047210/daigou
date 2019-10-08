@@ -98,6 +98,53 @@ class DaigouBuyer(db.Model, TimestampMixin, DataBaseOptMixin):
         return cls.query.filter_by(phone=buyer_phone).one_or_none()
 
 
+class BookStroke(db.Model, TimestampMixin, DataBaseOptMixin):
+    """ 订单行程信息 """
+    __tablename__ = 'daigou_stroke'
+    id = db.Column(db.Integer(), primary_key=True)
+    stroke_name = db.Column(db.String(32), index=True, nullable=False, comment='行程名')
+    tracking_number = db.Column(db.String(32), index=False, nullable=True, default='', comment='快递单号')
+    tracking_date = db.Column(db.DateTime(), index=False, nullable=True, default=None, comment='快递发送时间')
+
+    def __init__(self, name):
+        self.stroke_name = name
+
+    def to_dict(self):
+        return dict(
+            stroke_id=self.id,
+            stroke_name=self.stroke_name,
+            tracking_number=self.tracking_number,
+            tracking_date=self.tracking_date.strftime('%Y-%m-%d %H:%M:%S') if self.tracking_date else ''
+        )
+
+    @classmethod
+    def get_all_list(cls):
+        return cls.query.order_by(desc(cls.id)).all()
+
+    @classmethod
+    def get_stroke_by_id(cls, stroke_id):
+        return cls.query.filter_by(id=stroke_id).one_or_none()
+
+
+class OrderHistory(db.Model, TimestampMixin, DataBaseOptMixin):
+    """ 订单履历信息 """
+    __tablename__ = 'daigou_orders'
+
+    id = db.Column(db.Integer(), primary_key=True)
+    stroke_id = db.Column(db.Integer(), index=True)
+    book_name = db.Column(db.String(32), index=True, nullable=False, comment='订购人姓名')
+    book_goods = db.Column(db.String(1024), index=False, nullable=False, comment='订购商品')
+    address = db.Column(db.String(254), nullable=False, default='', comment='收件人地址')
+
+    @classmethod
+    def get_order_list(cls, stroke_id):
+        return cls.query.filter_by(stroke_id=stroke_id).all()
+
+    @classmethod
+    def get_order_by_order_id(cls, order_id):
+        return cls.query.filter_by(id=order_id).one_or_none()
+
+
 class User(db.Model, TimestampMixin, UserMixin):
     __tablename__ = 'user'
 

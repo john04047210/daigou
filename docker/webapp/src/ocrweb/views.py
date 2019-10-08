@@ -39,9 +39,8 @@ def index():
 
 
 @blueprint.route('/render/buyers', methods=['GET'])
-@blueprint.route('/render/buyers<int:buyer_id>', methods=['GET'])
 @login_required
-def render_devices_list(buyer_id=None):
+def render_devices_list():
     buyers = PocApi.get_all_buyer()
     babel_language = _get_language()
     return render_template(
@@ -73,6 +72,74 @@ def api_upt_buyer(buyer_id=None):
         'code': 0,
         'msg': 'success',
         'data': buyer
+    })
+
+
+@blueprint.route('/render/orders', methods=['GET'])
+@login_required
+def render_orders_list():
+    books = []
+    stroke_id = request.args.get('stroke_id', default=None)
+    strokes = PocApi.get_stroke_list()
+    if stroke_id is None and strokes:
+        stroke_id = strokes[0]['stroke_id']
+    if stroke_id:
+        books = PocApi.get_order_list(stroke_id)
+    babel_language = _get_language()
+    return render_template(
+        'books.html',
+        babel_language=babel_language,
+        prefix=current_app.config['URL_PREFIX'],
+        strokes=strokes,
+        books=books
+    )
+
+
+@blueprint.route('/api/stroke', methods=['POST'])
+@login_required
+def api_new_stroke():
+    post_data = request.get_json()
+    stroke = PocApi.new_stroke(post_data['name'])
+    return jsonify({
+        'code': 0,
+        'msg': 'success',
+        'data': stroke
+    })
+
+
+@blueprint.route('/api/order', methods=['POST'])
+@login_required
+def api_new_order():
+    post_data = request.get_json()
+    stroke = PocApi.new_order(post_data['stroke_id'], post_data['book_name'], post_data['book_goods'])
+    return jsonify({
+        'code': 0,
+        'msg': 'success',
+        'data': stroke
+    })
+
+
+@blueprint.route('/api/order/<int:order_id>', methods=['PUT'])
+@login_required
+def api_upt_order(order_id=None):
+    post_data = request.get_json()
+    address = post_data['address'] if 'address' in post_data else None
+    stroke = PocApi.upt_order(order_id, post_data['book_name'], post_data['book_goods'], address=address)
+    return jsonify({
+        'code': 0,
+        'msg': 'success',
+        'data': stroke
+    })
+
+
+@blueprint.route('/api/order/<int:order_id>/address/<int:address_id>', methods=['GET'])
+@login_required
+def api_upt_order_address(order_id=None, address_id=None):
+    stroke = PocApi.upt_order_address(order_id, address_id)
+    return jsonify({
+        'code': 0,
+        'msg': 'success',
+        'data': stroke
     })
 
 
