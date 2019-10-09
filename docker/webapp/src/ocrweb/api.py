@@ -88,15 +88,20 @@ class PocApi:
 
     @classmethod
     def new_order(cls, stroke_id, book_name, book_goods):
-        order = OrderHistory()
-        order.stroke_id = stroke_id
-        order.book_name = book_name
-        order.book_goods = book_goods
-        addresses = DBBuyer.get_buyer_by_name(order.book_name)
-        if addresses and len(addresses) == 1:
-            address = addresses[0]
-            order.address = '\n'.join((address.name, address.phone, address.address))
-        order.new_record()
+        order = OrderHistory.get_order_by_book_name(stroke_id, book_name)
+        if order:
+            order.book_goods = order.book_goods + '+' + book_goods
+            order.upt_record()
+        else:
+            order = OrderHistory()
+            order.stroke_id = stroke_id
+            order.book_name = book_name
+            order.book_goods = book_goods
+            addresses = DBBuyer.get_buyer_by_name(order.book_name)
+            if addresses and len(addresses) == 1:
+                address = addresses[0]
+                order.address = '\n'.join((address.name, address.phone, address.address))
+            order.new_record()
         return order.id
 
     @classmethod

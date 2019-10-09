@@ -144,6 +144,10 @@ class OrderHistory(db.Model, TimestampMixin, DataBaseOptMixin):
     def get_order_by_order_id(cls, order_id):
         return cls.query.filter_by(id=order_id).one_or_none()
 
+    @classmethod
+    def get_order_by_book_name(cls, stroke_id, book_name):
+        return cls.query.filter_by(stroke_id=stroke_id, book_name=book_name).one_or_none()
+
 
 class User(db.Model, TimestampMixin, UserMixin):
     __tablename__ = 'user'
