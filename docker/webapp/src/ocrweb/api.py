@@ -121,4 +121,4 @@ class PocApi:
         if order and address:
             order.address = '\n'.join((address.name, address.phone, address.address))
             order.upt_record()
-        return order.id
+        return order.address

@@ -113,7 +113,9 @@ $(function(){
         let address_id = $(this).val();
         let goodsid = $(this).data('goodsid');
         let get_url = pro_name+'/api/order/'+goodsid+'/address/'+address_id;
-        $.get(get_url);
+        $.get(get_url, function(data){
+            $('#book_address_'+goodsid).text(data.data);
+        });
     });
 
     $('#btn-modal-submit').on('click', function(e){
