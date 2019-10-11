@@ -15,7 +15,6 @@ class Utils(object):
             zip_filename = '{0}.zip'.format(datetime.now().strftime('%Y%m%d%H%M%S'))
             xls_filename = '{0}.xlsx'.format(stroke_name)
             meter_wb = Workbook()
-            wx_title = [stroke_name]
             ws_header = ['序号', '姓名', '物品名称', '收货地址']
             cur_ws = meter_wb.active
             cur_ws.title = '物品核对'
@@ -23,7 +22,7 @@ class Utils(object):
             cur_ws.column_dimensions['D'].width = 60
             cur_ws.merge_cells('A1:D1')
             cur_ws.row_dimensions[1].height = 40
-            cur_ws.append(wx_title)
+            cur_ws.cell(row=1, column=1, value=stroke_name)
             cur_ws.append(ws_header)
             zip_filepath = os.path.join(base_path, 'tmp', zip_filename)
             xls_filepath = os.path.join(base_path, 'tmp', xls_filename)
