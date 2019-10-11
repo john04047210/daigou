@@ -20,9 +20,7 @@ class Utils(object):
             cur_ws = meter_wb.active
             cur_ws.title = '物品核对'
             cur_ws.column_dimensions['C'].width = 40
-            cur_ws.column_dimensions['C'].style.alignment.wrap_text = True
             cur_ws.column_dimensions['D'].width = 60
-            cur_ws.column_dimensions['D'].style.alignment.wrap_text = True
             cur_ws.merge_cells('A1:D1')
             cur_ws.row_dimensions[1].height = 40
             cur_ws.append(wx_title)
