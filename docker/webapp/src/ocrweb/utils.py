@@ -21,7 +21,8 @@ class Utils(object):
             cur_ws.title = '物品核对'
             cur_ws.column_dimensions['C'].width = 40
             cur_ws.column_dimensions['D'].width = 60
-            cur_wx.merge_cells('A1:D1')
+            cur_ws.merge_cells('A1:D1')
+            cur_ws.row_dimensions[1].height = 40
             cur_ws.append(wx_title)
             cur_ws.append(ws_header)
             zip_filepath = os.path.join(base_path, 'tmp', zip_filename)
