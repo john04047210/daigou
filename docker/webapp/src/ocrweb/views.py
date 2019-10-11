@@ -2,10 +2,12 @@
 
 import hashlib
 
-from flask import (Blueprint, current_app, jsonify, redirect, request, render_template, session, url_for)
+from flask import (Blueprint, current_app, jsonify, redirect, request, render_template, session, url_for,
+                   make_response, send_file)
 from flask_login import current_user, login_user, logout_user, login_required
 from .api import PocApi
 from .models import User
+from .utils import Utils
 
 blueprint = Blueprint(
     'poc_index',
@@ -72,6 +74,29 @@ def api_upt_buyer(buyer_id=None):
         'code': 0,
         'msg': 'success',
         'data': buyer
+    })
+
+
+@blueprint.route('/api/download/orders', methods=['GET'])
+@login_required
+def download_orders_list():
+    stroke_id = request.args.get('stroke_id', default=None)
+    if stroke_id:
+        stroke_name = PocApi.get_stroke_name(stroke_id)
+        books = PocApi.get_order_list_for_download(stroke_id)
+        if books:
+            zip_filepath, zip_filename = Utils.create_xlsx(stroke_name=stroke_name, orders=books)
+            mime_type = 'application/zip'
+            responses = make_response(send_file(zip_filepath, mime_type, as_attachment=True))
+            responses.headers['Content-Type'] = mime_type
+            responses.headers['Content-Disposition'] = 'attachment; filename={}'.format(zip_filename)
+            responses.headers['Set-Cookie'] = 'fileDownload=true: path=/'
+            responses.headers['Cache-control'] = 'no-cache'
+            return responses
+
+    return jsonify({
+        'code': 1,
+        'msg': 'param error'
     })
 
 
@@ -165,7 +190,7 @@ def login():
                     if user.password == input_password:
                         login_user(user, remember=remember)
                         next_url = request.args.get('next')
-                        return redirect(next_url or url_for('poc_index.index'))
+                        return redirect(next_url or url_for('poc_index.render_orders_list'))
         err_msg = 'email or password error'
     return render_template(
         'page_login.html',

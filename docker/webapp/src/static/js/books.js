@@ -22,12 +22,9 @@ $(function(){
 
     $('.wrapper').on('click', '.btn-download', function(e){
         e.preventDefault();
-        file_format = $(this).data('file_format');
-        range_date = $('#range-date').val();
-        dates = range_date.split(' - ');
-        date_start = dates[0].split('/');
-        date_end = dates[1].split('/');
-        $.fileDownload(pro_name+'/api/device/download/?format='+file_format+'&start='+date_start[2]+'-'+date_start[0]+'-'+date_start[1]+' 00:00:00&end='+date_end[2]+'-'+date_end[0]+'-'+date_end[1]+' 23:59:59');
+        let file_format = $(this).data('file_format');
+        let stroke_id = $('#stroke_list').val();
+        $.fileDownload(pro_name+'/api/download/orders?format='+file_format+'&stroke_id='+stroke_id);
     });
 
     $('.wrapper').on('click', '.btn-stroke-add', function(e){

@@ -53,6 +53,13 @@ class PocApi:
         return rst
 
     @classmethod
+    def get_stroke_name(cls, stroke_id):
+        stroke_info = BookStroke.get_stroke_by_id(stroke_id)
+        if stroke_info:
+            return stroke_info.stroke_name
+        return None
+
+    @classmethod
     def upt_stroke(cls, stroke_id, **kwargs):
         stroke_info = BookStroke.get_stroke_by_id(stroke_id)
         stroke_info.stroke_name = kwargs['stroke_name'] if 'stroke_name' in kwargs else ''
@@ -82,6 +89,19 @@ class PocApi:
                 'book_goods': order.book_goods,
                 'address': order.address,
                 'addresses': _address
+            }
+            rst.append(_item)
+        return rst
+
+    @classmethod
+    def get_order_list_for_download(cls, stroke_id):
+        rst = []
+        orders = OrderHistory.get_order_list(stroke_id)
+        for order in orders:
+            _item = {
+                'book_name': order.book_name,
+                'book_goods': order.book_goods,
+                'address': order.address
             }
             rst.append(_item)
         return rst
