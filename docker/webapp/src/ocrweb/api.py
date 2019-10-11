@@ -120,7 +120,7 @@ class PocApi:
             addresses = DBBuyer.get_buyer_by_name(order.book_name)
             if addresses and len(addresses) == 1:
                 address = addresses[0]
-                order.address = '\n'.join((address.name, address.phone, address.address))
+                order.address = '\n'.join((address.name+' '+address.phone, address.address))
             order.new_record()
         return order.id
 
