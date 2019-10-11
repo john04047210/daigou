@@ -20,7 +20,9 @@ class Utils(object):
             cur_ws = meter_wb.active
             cur_ws.title = '物品核对'
             cur_ws.column_dimensions['C'].width = 40
+            cur_ws.column_dimensions['C'].style.alignment.wrap_text = True
             cur_ws.column_dimensions['D'].width = 60
+            cur_ws.column_dimensions['D'].style.alignment.wrap_text = True
             cur_ws.merge_cells('A1:D1')
             cur_ws.row_dimensions[1].height = 40
             cur_ws.append(wx_title)
@@ -32,9 +34,7 @@ class Utils(object):
                 for order in orders:
                     cur_ws.cell(row=row_idx+2, column=1, value=str(row_idx))
                     cur_ws.cell(row=row_idx+2, column=2, value=order.get('book_name'))
-                    cur_ws.cell(row=row_idx+2, column=3).style.alignment.wrap_text = True
                     cur_ws.cell(row=row_idx+2, column=3, value=order.get('book_goods'))
-                    cur_ws.cell(row=row_idx+2, column=4).style.alignment.wrap_text = True
                     cur_ws.cell(row=row_idx+2, column=4, value=order.get('address'))
                     cur_ws.row_dimensions[row_idx+2].height = 40
                     row_idx = row_idx + 1
