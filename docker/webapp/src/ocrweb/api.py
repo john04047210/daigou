@@ -86,6 +86,7 @@ class PocApi:
                 _address.append({
                     'id': address.id,
                     'name': address.name,
+                    'wx_name': address.wx_name,
                     'phone': address.phone,
                     'address': address.address
                 })

@@ -92,7 +92,7 @@
                                             <div class="radio">
                                               <label>
                                                 <input type="radio" name="book_address_{{book.id}}" id="book_address_{{ book.id }}_{{ address.id }}" value="{{ address.id }}" data-goodsid="{{book.id}}">
-                                                {{ address.name }}  {{ address.phone }} <br> {{ address.address }}
+                                                {{ address.name }}{{ '('+address.wx_name+')' if address.wx_name else '' }}  {{ address.phone }} <br> {{ address.address }}
                                               </label>
                                             </div>
                                             {%- else -%}
