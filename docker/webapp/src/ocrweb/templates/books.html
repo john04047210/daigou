@@ -86,7 +86,7 @@
                                     </td>
                                     <td>
                                         {% if book.address -%}
-                                            <span class="text-muted font-16" id="book_address_{{book.id}}">{{ book.address | replace('¥n', '<br>')}}</span><br>
+                                            <span class="text-muted font-16" id="book_address_{{book.id}}">{{ book.address | replace('¥n', '<br>')}}</span>
                                             <hr>
                                             {% for address in book.addresses -%}
                                             <div class="radio">
@@ -100,7 +100,7 @@
                                                 <a href="/master/render/buyers" target="_blank" class="action-icon d-block d-xl-none text-lg-left"> <i class="mdi mdi-plus-circle-outline"></i></a>
                                             {%- endfor %}
                                         {%- else -%}
-                                            <span class="text-muted font-16" id="book_address_{{book.id}}">{{ book.address | replace('¥n', '<br>') }}</span><br>
+                                            <span class="text-muted font-16" id="book_address_{{book.id}}">{{ book.address | replace('¥n', '<br>') }}</span>
                                             <hr>
                                             {% for address in book.addresses -%}
                                             <div class="radio">
