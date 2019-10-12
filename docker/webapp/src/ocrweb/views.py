@@ -77,6 +77,16 @@ def api_upt_buyer(buyer_id=None):
     })
 
 
+@blueprint.route('/api/buyer/<int:buyer_id>', methods=['DELETE'])
+@login_required
+def api_del_buyer(buyer_id=None):
+    PocApi.del_buyer(buyer_id)
+    return jsonify({
+        'code': 0,
+        'msg': 'success'
+    })
+
+
 @blueprint.route('/api/download/orders', methods=['GET'])
 @login_required
 def download_orders_list():

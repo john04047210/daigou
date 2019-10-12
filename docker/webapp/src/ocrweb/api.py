@@ -39,6 +39,10 @@ class PocApi:
         return buyer.to_dict()
 
     @classmethod
+    def del_buyer(cls, buyer_id):
+        DBBuyer.del_record(logic=True)
+
+    @classmethod
     def new_stroke(cls, stroke_name):
         stroke_info = BookStroke(stroke_name)
         stroke_info.new_record()
