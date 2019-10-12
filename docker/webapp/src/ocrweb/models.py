@@ -4,7 +4,7 @@ from __future__ import absolute_import, print_function
 
 from datetime import datetime
 from flask_login import UserMixin
-from sqlalchemy import asc, desc
+from sqlalchemy import asc, desc, or_
 
 from .database import db
 
@@ -90,7 +90,7 @@ class DaigouBuyer(db.Model, TimestampMixin, DataBaseOptMixin):
     def get_buyer_by_name(cls, buyer_name=None, **kwargs):
         assert buyer_name
         rule = '%'+buyer_name+'%'
-        return cls.query.filter(cls.name.like(rule)).all()
+        return cls.query.filter(or_(cls.name.like(rule), cls.wx_name.like(rule))).all()
 
     @classmethod
     def get_buyer_by_phone(cls, buyer_phone=None, **kwargs):
