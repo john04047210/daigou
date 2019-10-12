@@ -42,7 +42,7 @@ class PocApi:
     def del_buyer(cls, buyer_id):
         buyer = DBBuyer.get_buyer_by_id(buyer_id=buyer_id)
         if buyer:
-            buyer.del_record(logic=True)
+            buyer.del_record(logic=False)
 
     @classmethod
     def new_stroke(cls, stroke_name):
