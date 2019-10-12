@@ -79,7 +79,7 @@ class DaigouBuyer(db.Model, TimestampMixin, DataBaseOptMixin):
 
     @classmethod
     def get_all_buyer(cls, **kwargs):
-        return cls.query.all()
+        return cls.query.filter(cls.status.in_(('N', 'U', 'D'))).all()
 
     @classmethod
     def get_buyer_by_id(cls, buyer_id=None, **kwargs):
