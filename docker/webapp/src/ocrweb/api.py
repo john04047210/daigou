@@ -146,6 +146,6 @@ class PocApi:
         order = OrderHistory.get_order_by_order_id(order_id)
         address = DBBuyer.get_buyer_by_id(address_id)
         if order and address:
-            order.address = '\n'.join((address.name, address.phone, address.address))
+            order.address = '\n'.join((address.name+' '+address.phone, address.address))
             order.upt_record()
         return order.address
