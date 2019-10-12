@@ -4,7 +4,7 @@ from __future__ import absolute_import, print_function
 
 from datetime import datetime
 from flask_login import UserMixin
-from sqlalchemy import asc, desc, or_
+from sqlalchemy import desc, or_
 
 from .database import db
 
@@ -28,7 +28,7 @@ class DataBaseOptMixin(object):
                 self.status = 'D'
                 db.session.merge(self)
             else:
-                db.session.remove(self)
+                db.session.delete(self)
         db.session.commit()
         return self
 
@@ -39,7 +39,7 @@ class TimestampMixin(object):
     """Creation timestamp."""
 
     updated = db.Column(db.DateTime, nullable=False, default=datetime.now,
-                     onupdate=datetime.now)
+                        onupdate=datetime.now)
     """Updated timestamp."""
 
     status = db.Column(db.String(1), nullable=False, default='N', onupdate='U')
