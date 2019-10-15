@@ -80,6 +80,31 @@ $(function(){
         });
     });
 
+    $('.wrapper').on('click', '.btn-goods-delete', function(e){
+        e.preventDefault();
+        let goodsid = $(this).data('goodsid');
+        let post_url = pro_name+'/api/order/'+goodsid;
+        $.ajax({
+            method: 'DELETE',
+            url: post_url,
+            success: function(data, textStatus, jqXHR) {
+                if(data.code == 0) {
+                    location.reload(true);
+                } else {
+                    $('#info-modal').modal('hide');
+                    $.NotificationApp.send("Info!", data.msg, "bottom-right", "rgba(0,0,0,0.2)", "error");
+                }
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                $('#info-modal').modal('hide');
+                $.NotificationApp.send("ServerError!", textStatus, "bottom-right", "rgba(0,0,0,0.2)", "error");
+            },
+            complete: function(jqXHR, textStatus) {
+                dev_update_mode = null;
+            }
+        });
+    });
+
     $('.wrapper').on('click', '.btn-goods-edit', function(e){
         e.preventDefault();
         let goodsid = $(this).data('goodsid');

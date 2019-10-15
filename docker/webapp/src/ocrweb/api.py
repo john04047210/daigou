@@ -142,6 +142,12 @@ class PocApi:
         return order.id
 
     @classmethod
+    def del_order(cls, order_id):
+        order = OrderHistory.get_order_by_order_id(order_id)
+        if order:
+            order.del_record(logic=False)
+
+    @classmethod
     def upt_order_address(cls, order_id, address_id):
         order = OrderHistory.get_order_by_order_id(order_id)
         address = DBBuyer.get_buyer_by_id(address_id)

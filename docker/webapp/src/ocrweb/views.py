@@ -167,6 +167,16 @@ def api_upt_order(order_id=None):
     })
 
 
+@blueprint.route('/api/order/<int:order_id>', methods=['DELETE'])
+@login_required
+def api_del_order(order_id=None):
+    PocApi.del_order(order_id)
+    return jsonify({
+        'code': 0,
+        'msg': 'success'
+    })
+
+
 @blueprint.route('/api/order/<int:order_id>/address/<int:address_id>', methods=['GET'])
 @login_required
 def api_upt_order_address(order_id=None, address_id=None):
