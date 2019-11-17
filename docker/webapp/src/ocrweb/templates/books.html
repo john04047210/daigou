@@ -36,7 +36,7 @@
                             <label for="stroke_list">行程</label>
                                 <select class="form-control" id="stroke_list">
                                     {% for stroke in strokes -%}
-                                    <option value="{{ stroke.stroke_id }}">{{ stroke.stroke_name }}</option>
+                                    <option value="{{ stroke.stroke_id }}">{{ stroke.stroke_id }}:{{ stroke.stroke_name }}</option>
                                     {%- endfor %}
                                 </select>
                         </div>
